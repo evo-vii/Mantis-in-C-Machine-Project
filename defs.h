@@ -16,4 +16,17 @@ MANTIS - DEFS Header File
 
 // DEFINITIONS
 
+// Constants
+#define USERCHAR_MAX 37;
 
+// Type Definitions
+typedef char[37] Username;
+
+
+// Structures
+struct playerData
+{
+    Username playerName;
+    int nScoreMax;
+    int nGameWins;
+};

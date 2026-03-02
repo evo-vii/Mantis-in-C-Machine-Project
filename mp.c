@@ -14,12 +14,36 @@
 
 */
 
+/*
+    PATCH NOTES In-dev 0.0.3 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+
+    Primary
+    - Added basic function comments in the main "mp.c" file.
+    - Created "gamefunctions.c" containing the game flow logic.
+    - Created the basic function layouts for "gamefunctions.c".
+    - Declared constant values within "defs.h" such as max username character count.
+    - Added Patch Notes for the main "mp.c" file.
+    
+    In gamefunctions.c/playerInit()
+    - Added basic input for total player count.
+
+    In defs.h
+    - Added structure declaration for player data.
+
+
+*/
+
+
 #include "defs.h"
 
 // FUNCTION DECLARATIONS
 
 // Game Proper
-
+/*
+    The function startGame() calls the helper functions from the fil "gamefunctions.c",
+    to begin processing the game flow including player initialization, deck preparation,
+    game proper, and summarization of the game.
+*/
 void startGame()
 {
     printf("You are Starting the Game.");
@@ -27,17 +51,25 @@ void startGame()
 
 // Game Control
 
+/*
+    The function settings() brings the user to access the program's settings wherein various
+    game preferences can be toggled and modified.
+*/
 void settings()
 {
     printf("You are in the Settings Menu.");
 }
 
+/*
+    The function topPlayers() brings the user to access the leaderboard from the last few
+    games of MANTIS.
+*/
 void topPlayers()
 {
     printf("You are in the Top Players Menu.");
 }
 
-void mainMenu()
+void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
 {
 
     int nSelection;
