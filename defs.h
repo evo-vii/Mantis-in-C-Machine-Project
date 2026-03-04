@@ -13,6 +13,8 @@ MANTIS - DEFS Header File
 
 #include <stdio.h>
 #include <string.h>
+#include "helpers_1.c"
+#include "helpers_2.c"
 
 // DEFINITIONS
 
@@ -20,13 +22,12 @@ MANTIS - DEFS Header File
 #define USERCHAR_MAX 37;
 
 // Type Definitions
-typedef char[37] Username;
+typedef char Username[37];
 
-
-// Structures
-struct playerData
+typedef struct plyrDT
 {
     Username playerName;
     int nScoreMax;
     int nGameWins;
-};
+} playerData;
+
