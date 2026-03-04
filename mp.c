@@ -8,28 +8,26 @@
 * Author/s : Kabigting, Derrell Maiko V.
 *            Sanico, Lance Matthew G.
 * Section : S12A
-* Last Modified : 2/15/26
-* Version : In-dev 0.0.2
+* Last Modified : 03/04/2026
+* Version : In-dev 0.0.4
 * Acknowledgments : <list of references used in the making of this project>
 
 */
 
 /*
-    PATCH NOTES In-dev 0.0.3 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES In-dev 0.0.4 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
     Primary
-    - Added basic function comments in the main "mp.c" file.
-    - Created "gamefunctions.c" containing the game flow logic.
-    - Created the basic function layouts for "gamefunctions.c".
-    - Declared constant values within "defs.h" such as max username character count.
-    - Added Patch Notes for the main "mp.c" file.
+    - Included mantis.txt in repository folder.
     
-    In gamefunctions.c/playerInit()
-    - Added basic input for total player count.
-
     In defs.h
-    - Added structure declaration for player data.
+    - Made playerData a type-defined structure.
+    - Included helper C files from MP Specs starter kit: helpers_1.c, helpers_2.c.
 
+    In gamefunctions.c
+    - Created the hard-coded version of playerInit(), NO input username as of now.
+    - Added comment templates for each function.
+    - Added main function commands. 
 
 */
 
