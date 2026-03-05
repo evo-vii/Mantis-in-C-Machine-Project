@@ -8,26 +8,18 @@
 * Author/s : Kabigting, Derrell Maiko V.
 *            Sanico, Lance Matthew G.
 * Section : S12A
-* Last Modified : 03/04/2026
-* Version : In-dev 0.0.4
+* Last Modified : 03/05/2026
+* Version : In-dev 0.0.6
 * Acknowledgments : <list of references used in the making of this project>
 
 */
 
 /*
-    PATCH NOTES In-dev 0.0.4 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
-
-    Primary
-    - Included mantis.txt in repository folder.
-    
-    In defs.h
-    - Made playerData a type-defined structure.
-    - Included helper C files from MP Specs starter kit: helpers_1.c, helpers_2.c.
+    PATCH NOTES In-dev 0.0.6 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
     In gamefunctions.c
-    - Created the hard-coded version of playerInit(), NO input username as of now.
-    - Added comment templates for each function.
-    - Added main function commands. 
+    - Commented a warning for AI-generated lines of code (lines 50-142).
+    - Note: As of 03/05/2026, gamefunctions.c has not undergone any form of formal debugging.
 
 */
 

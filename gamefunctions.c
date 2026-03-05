@@ -45,7 +45,7 @@ int playerInit(int nPlyrCnt)
 }
 
 /*
-    The function deckInit()
+    The function deckInit() // DEVNOTE-Lance: WARNING! LINE 50-142 IS AI GENERATED CODE, PLEASE RE-PROGRAM AS SOON AS POSSIBLE!
 */
 void deckinit(GameState *gs, int playercount) {
     gs->playercount = playercount;
