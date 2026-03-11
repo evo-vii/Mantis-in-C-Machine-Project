@@ -1,18 +1,17 @@
-/*
-
-MANTIS - DEFS Header File
-
-* Author/s : Kabigting, Derrell Maiko V.
-*            Sanico, Lance Matthew G.
-* Section : S12A
-* Last Modified : 2/15/26
-
-*/
+/******************************************************************************
+ *  Description     : This is the defs.h file of the Machine Project, including all necessary
+                      type definitions and constant declarations to be used in the program.
+ *  Author/s        : Kabigting, Derrell Maiko V.
+ *                    Sanico, Lance Matthew G.
+ *  Section         : S12A
+ *  Last Modified   : 03/11/2026
+******************************************************************************/
 
 // PRE-PROCESSOR DIRECTIVES
 
 #include <stdio.h>
 #include <string.h>
+#include "helpers_1.c"
 #include "helpers_2.c"
 
 // DEFINITIONS
