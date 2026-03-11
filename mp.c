@@ -1,25 +1,27 @@
 
 // INTRODUCTION
 
-/**
-
-* Description : This is a modified version of the Mantis Card game in text form, written in C99 and is
-                capable to be ran on a command line interpreter.
-* Author/s : Kabigting, Derrell Maiko V.
-*            Sanico, Lance Matthew G.
-* Section : S12A
-* Last Modified : 03/05/2026
-* Version : In-dev 0.0.6
-* Acknowledgments : <list of references used in the making of this project>
-
-*/
+/******************************************************************************
+ *  Description     : This is a modified version of the Mantis Card game in text form, written in C99 and is
+                      capable to be ran on a command line interpreter.
+ *  Author/s        : Kabigting, Derrell Maiko V.
+ *                    Sanico, Lance Matthew G.
+ *  Section         : S12A
+ *  Last Modified   : 03/11/2026
+ *  Acknowledgments : <list of references used in the making of this project>
+******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.0.6 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES In-dev 0.0.6B (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
-    In gamefunctions.c
-    - Commented a warning for AI-generated lines of code (lines 50-142).
-    - Note: As of 03/05/2026, gamefunctions.c has not undergone any form of formal debugging.
+    Primary
+    - Utilized format usage from MP Stater Files provided.
+    - Included formal beginning and end comments indicating information in all files.
+    - Included the interface set of C files for potential use within the repository.
+    - This version (0.0.6B) to be pushed to an alternate branch within the repository.
+
+    defs.h
+    - Included "helpers_1.c" as a pre-processor directive.
 
 */
 
@@ -120,3 +122,15 @@ int main()
     
     return 0;
 }
+
+/**
+ * This is to certify that this project is my/our own work, based on my/our personal
+ * efforts in studying and applying the concepts learned. I/We have constructed the
+ * functions and their respective algorithms and corresponding code by myself/ourselves.
+ * The program was run, tested, and debugged by my/our own efforts. I/We further certify
+ * that I/we have not copied in part or whole or otherwise plagiarized the work of other
+ * students and/or persons, nor did I employ the use of AI in any part of the deliverable.
+ *
+ * Kabigting, Derrell Maiko V. (ID NO.)
+ * Sanico, Lance Matthew G.    (ID NO.)
+ */
