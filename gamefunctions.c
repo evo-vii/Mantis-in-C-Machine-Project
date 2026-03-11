@@ -1,8 +1,12 @@
-/*
-
-GAME PROPER FUNCTIONS FILE.
-
-*/
+/******************************************************************************
+ *  Description     : This is the primary file housing the game flow functions and is normally accessed via
+                      playing the actual game. Cannot be accessed otherwise in other main menu options.
+ *  Author/s        : Kabigting, Derrell Maiko V.
+ *                    Sanico, Lance Matthew G.
+ *  Section         : S12A
+ *  Last Modified   : 03/11/2026
+ *  Acknowledgments : <list of references used in the making of this project>
+******************************************************************************/
 
 #include "defs.h"
 
