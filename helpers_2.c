@@ -1,9 +1,10 @@
 /******************************************************************************
- *  Description     : <short description of the file>
- *  Author/s        : <student1 full name (last name, first name)>
- *                    <student2 full name (last name, first name)>
- *  Section         : <your section>
- *  Last Modified   : <date when last revision was made>
+ *  Description     : This is one of the helper functions provided for the
+                      machine project.
+ *  Author/s        : Kabigting, Derrell Maiko V.
+ *                    Sanico, Lance Matthew G.
+ *  Section         : S12A
+ *  Last Modified   : 03/11/2026
  ******************************************************************************/
 
 #ifndef HELPERS_2_C // Include this to prevent redefinition error
