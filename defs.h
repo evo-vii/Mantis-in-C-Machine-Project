@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "helpers_1.c"
+// #include "helpers_1.c"
 #include "helpers_2.c"
 
 // DEFINITIONS
@@ -20,24 +20,28 @@
 #define USERCHAR_MAX 37
 #define MAX_CARDS 100
 #define COLORS 7
+#define PLAYER_TAG 3
+#define PLAYER_MAX 6
 
 // Type Definitions
 typedef char Username[37];
+typedef char playerTag[PLAYER_TAG];
 
-typedef struct plyrDT
+typedef struct Players
 {
     Username playerName;
+    playerTag PT;
     int nScoreMax;
     int nGameWins;
-} playerData;
+} PlayerData;
 
-typedef struct
+typedef struct CardDetails
 {
     char front;
     char back[4];
 } Card;
 
-typedef struct 
+typedef struct GameStatus
 {
     Card deck[MAX_CARDS];
     int deck_size;
