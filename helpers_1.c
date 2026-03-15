@@ -4,7 +4,7 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/11/2026
+ *  Last Modified   : 03/15/2026
  ******************************************************************************/
 
 #ifndef HELPERS_1_C // Include this to prevent redefinition error
@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-#include "defs.h"
 
 /******************************************************************************
  * NOTE: These functions are placed here in helpers_1.c to demonstrate code
