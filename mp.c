@@ -7,21 +7,24 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/11/2026
+ *  Last Modified   : 03/15/2026
  *  Acknowledgments : <list of references used in the making of this project>
 ******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.0.6B (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES In-dev 0.0.7 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
     Primary
-    - Utilized format usage from MP Stater Files provided.
-    - Included formal beginning and end comments indicating information in all files.
-    - Included the interface set of C files for potential use within the repository.
-    - This version (0.0.6B) to be pushed to an alternate branch within the repository.
+    - Created players.txt file.
 
-    defs.h
-    - Included "helpers_1.c" as a pre-processor directive.
+    In defs.h
+    - Renamed PlayerData structure and added a 'Player Tag' variable.
+    - Added 'PLAYER_TAG' constant as a max character value for the Player Tag variable.
+    - Added 'PLAYER_MAX' constant to establish the max amount of players per game.
+    - Temporarily removed helpers_1.c as a preprocessor directive.
+
+    In helpers_1.c
+    - Removed defs.h as a preprocessor directive.
 
 */
 
