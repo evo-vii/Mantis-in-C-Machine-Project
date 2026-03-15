@@ -25,14 +25,21 @@ void displayDeck()
     The function playerInit() is the first stage of the game proper. (TBC)
 
     // DEVNOTE-Lance: Players are hard-coded in this version of the game function, adding new players, usernames and file handling will be added in the future.
+    // DEVNOTE-Lance: TO ASK TO PROF: How does menu-ing work in selecting players.
 */
-int playerInit(int nPlyrCnt)
+int playerInit(PlayerData currPlayers[])
 {
     int nCount = 0;
-    int nCtr;
 
-    // Inserted temporary usernames while file handling is not yet set.
-    Username plyrUN[6] = {"Antioch", "Constantinople", "Ur", "Northumbria", "Gaul", "Prussia"};
+    int nCtr;
+    int nCtr2;
+
+    int nChoice;
+
+    char cNameRead[USERCHAR_MAX];
+
+    // Declaring a file pointer for the player list.
+    FILE* fPlayers;
     
     do
     {
@@ -40,13 +47,33 @@ int playerInit(int nPlyrCnt)
         scanf("%d", &nCount);
     } while (nCount > 6 || nCount < 3);
 
+    fPlayers = fopen("players.txt", "r");
+
     for (nCtr = 0; nCtr < nCount; nCtr++)
     {
-        printf("P%d: %s\n", nCtr+1, plyrUN[nCtr]);
+        printf("P%d: ?\n\n", nCtr+1);
+        printf("Select Player %d\n", nCtr+1);
+
+        for (nCtr2 = 0; nCtr2 < nCount; nCtr2++)
+        {
+            fscanf(fPlayers, "%s", cNameRead);
+            if (nCtr2 == 0)    
+                printf("[%d] <Add new player>\n", nCtr2);
+            else
+                printf("[%d] %s\n", nCtr2, cNameRead);
+        }
+        printf("\n>> ");
+        scanf("%d", &nChoice);
+
+
     }
+
+    fclose(fPlayers);
 
     return nCount;
 }
+
+
 
 /*
     The function deckInit() // DEVNOTE-Lance: WARNING! LINE 50-142 IS AI GENERATED CODE, PLEASE RE-PROGRAM AS SOON AS POSSIBLE!
@@ -145,6 +172,7 @@ void displayState(GameState *gs) {
     }
 }
 
+
 /*
     The function scoreFlow()...
 */
@@ -173,15 +201,19 @@ void runGame()
 }
 
 
-int main()
+int main() // THIS IS A TEST MAIN FUNCTION FOR DEBUGGING PURPOSES ONLY. TO BE REMOVED ON FINAL DEVELOPMENT.
 {
     
-    // Player Count Variable
-    int nPlyrCnt = 4;
-    GameState game;
+    PlayerData currPlayers[PLAYER_MAX];
 
-    deckinit(&game, nPlyrCnt);
-    displayState(&game);
+    // Player Count Variable
+    
+    // GameState game;
+
+    // deckinit(&game, nPlyrCnt);
+    // displayState(&game);
+
+    playerInit(currPlayers);
 
     // Actual Game Run
 
