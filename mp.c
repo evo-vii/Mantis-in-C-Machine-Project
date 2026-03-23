@@ -7,25 +7,32 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/22/2026
- *  Acknowledgments : <list of references used in the making of this project>
+ *  Last Modified   : 03/23/2026
+ *  Acknowledgments : w3schools.com
 ******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.0.8 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES In-dev 0.0.9 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
+    Primary
+    - Linked gamefunctions.c to mp.c.
+    - Updated mainMenu() menu controls.
+    - Established recursive systems in mainMenu() to prevent premature program termination.
+    - Removed inclusion of defs.h as it clashes with the inclusion of gamefunctions.c
+    
     In gamefunctions.c
     - Revised playerInit().
+    - Established deckInit().
+    - Built runGame().
+    - Built scoreFlow().
     
     In defs.h
     - Redefined the Player Number as an integer.
-    - 
-
-
+    - Redefined GameState.
+    - Created PlayerDeck.
 */
 
 
-// #include "defs.h"
 #include "gamefunctionsCopy.c"
 
 // FUNCTION DECLARATIONS
@@ -56,11 +63,12 @@ void settings()
 
 /*
     The function topPlayers() brings the user to access the leaderboard from the last few
-    games of MANTIS.
+    games of Mantis.
 */
 void topPlayers()
 {
-    printf("You are in the Top Players Menu.");
+    printf("\n[MANTIS TOP PLAYERS]\n");
+    printf("(Based on Most Wins)\n");
 }
 
 void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
@@ -76,41 +84,33 @@ void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
     printf("    [2] Top Players\n");
     printf("    [3] Settings\n");
     printf("    [0] Exit\n\n");
-    printf(">> ");
-
- 
-    scanf("%d", &nSelection);
-
-    if (nSelection == 1)
-        startGame();
-    else if (nSelection == 2)
-        topPlayers();
-    else if (nSelection == 3)
-        settings();
-    else if (nSelection == 0)
-        printf("You are exiting the program.\n");
-    else
-        printf("Invalid Input! Input Again!\n\n");
-
-    if (nSelection > 3 || nSelection < 0)
+    
+    do
     {
-        while (nSelection > 3 || nSelection < 0)
-        {
-            printf(">> ");
-            scanf("%d", &nSelection);
+        printf(">> ");
+        scanf("%d", &nSelection);
 
-            if (nSelection == 1)
-                startGame();
-            else if (nSelection == 2)
-                topPlayers();
-            else if (nSelection == 3)
-                settings();
-            else if (nSelection == 0)
-                printf("You are exiting the program.\n");
-            else
-                printf("Invalid Input! Input Again!\n\n");
+        if (nSelection == 1)
+        {
+            startGame();
+            mainMenu(); // Recursive Call
         }
+        else if (nSelection == 2)
+        {
+            topPlayers();
+            mainMenu(); // Recursive Call
+        }
+        else if (nSelection == 3)
+        {
+            settings();
+            mainMenu(); // Recursive Call
+        }
+        else if (nSelection == 0)
+            printf("You are exiting the program.\n");
+        else
+            printf("Invalid Input! Input Again!\n\n");
     }
+    while (nSelection > 3 || nSelection < 0);
 
 }
 
@@ -118,10 +118,8 @@ void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
 
 int main()
 {
-
     mainMenu();
 
-    
     return 0;
 }
 
