@@ -4,7 +4,7 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/11/2026
+ *  Last Modified   : 03/19/2026
 ******************************************************************************/
 
 // PRE-PROCESSOR DIRECTIVES
@@ -18,37 +18,55 @@
 
 // Constants
 #define USERCHAR_MAX 37
-#define MAX_CARDS 100
+#define MAX_CARDS 84
 #define COLORS 7
-#define PLAYER_TAG 3
 #define PLAYER_MAX 6
+#define CARD_DEAL 4
 
 // Type Definitions
-typedef char Username[37];
-typedef char playerTag[PLAYER_TAG];
-
-typedef struct Players
-{
-    Username playerName;
-    playerTag PT;
-    int nScoreMax;
-    int nGameWins;
-} PlayerData;
+typedef char Username[USERCHAR_MAX];
 
 typedef struct CardDetails
 {
-    char front;
-    char back[4];
+    char cFront;
+    char cBack[3];
+    int nPointVal;
 } Card;
 
-typedef struct GameStatus
+typedef struct GameBase
 {
+    int nPlyrCtr;
     Card deck[MAX_CARDS];
-    int deck_size;
-    int draw_index; //next card in the draw pile
-    int tanks[6][COLORS];
-    int scores[6];
-    int playercount;
 } GameState;
+
+typedef struct PDeck
+{
+    int nTankAmt;
+    Card TankPile[MAX_CARDS];
+
+    int nScoreAmt;
+    Card ScorePile[MAX_CARDS];
+
+} PlayerDeck;
+
+typedef struct PDT
+{
+    Username playerName;
+    int nPNum;
+    int nScoreMax;
+    int nGameWins;
+    PlayerDeck TheDeck;
+
+} PlayerData;
+
+// typedef struct GameStatus
+// {
+//     Card deck[MAX_CARDS];
+//     int deck_size;
+//     int draw_index; //next card in the draw pile
+//     int tanks[6][COLORS];
+//     int scores[6];
+//     int playercount;
+// } GameState;
 
 

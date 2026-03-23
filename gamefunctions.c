@@ -27,16 +27,19 @@ void displayDeck()
     // DEVNOTE-Lance: Players are hard-coded in this version of the game function, adding new players, usernames and file handling will be added in the future.
     // DEVNOTE-Lance: TO ASK TO PROF: How does menu-ing work in selecting players.
 */
-int playerInit(PlayerData currPlayers[])
+int playerInit(currPlayers currPlayers[])
 {
     int nCount = 0;
 
     int nCtr;
     int nCtr2;
+    int nPrintCtr;
 
     int nChoice;
+    int nStructIdx;
 
     char cNameRead[USERCHAR_MAX];
+    currPlayers BufferList[PLAYER_MAX];
 
     // Declaring a file pointer for the player list.
     FILE* fPlayers;
@@ -51,7 +54,20 @@ int playerInit(PlayerData currPlayers[])
 
     for (nCtr = 0; nCtr < nCount; nCtr++)
     {
-        printf("P%d: ?\n\n", nCtr+1);
+
+        if (nCtr == 0)
+            printf("P%d: ?\n\n", nCtr+1);
+        else 
+        {    
+            nStructIdx = 0;
+            
+            for (nPrintCtr = 0; nPrintCtr < nCtr; nPrintCtr)
+            {
+                printf("P%d: %s\n", nPrintCtr, currPlayers[nStructIdx].playerName);  
+            }
+            printf("P%d: ?\n\n", nCtr+1);
+            nStructIdx++;
+        }
         printf("Select Player %d\n", nCtr+1);
 
         for (nCtr2 = 0; nCtr2 < nCount; nCtr2++)
@@ -60,11 +76,24 @@ int playerInit(PlayerData currPlayers[])
             if (nCtr2 == 0)    
                 printf("[%d] <Add new player>\n", nCtr2);
             else
+            {    
                 printf("[%d] %s\n", nCtr2, cNameRead);
+                BufferList[nCtr-1].
+            }
         }
         printf("\n>> ");
         scanf("%d", &nChoice);
 
+        if (nChoice == 1)
+        {
+            // Find a way to create a new character, and store the data to players.txt.
+        }
+        else
+        {
+            // Find a way to load the character data from the text file to the character sheet.
+        }
+
+        // Load each player data to the struct.
 
     }
 

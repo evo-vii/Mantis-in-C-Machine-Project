@@ -7,24 +7,20 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/15/2026
+ *  Last Modified   : 03/22/2026
  *  Acknowledgments : <list of references used in the making of this project>
 ******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.0.7 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES In-dev 0.0.8 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
 
-    Primary
-    - Created players.txt file.
-
+    In gamefunctions.c
+    - Revised playerInit().
+    
     In defs.h
-    - Renamed PlayerData structure and added a 'Player Tag' variable.
-    - Added 'PLAYER_TAG' constant as a max character value for the Player Tag variable.
-    - Added 'PLAYER_MAX' constant to establish the max amount of players per game.
-    - Temporarily removed helpers_1.c as a preprocessor directive.
+    - Redefined the Player Number as an integer.
+    - 
 
-    In helpers_1.c
-    - Removed defs.h as a preprocessor directive.
 
 */
 
