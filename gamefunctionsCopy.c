@@ -386,6 +386,20 @@ void runGame()
     printf("\nTOTAL PLAYER COUNT: %d\n", theGame.nPlyrCtr); // To be removed.
 
     fCards = fopen("mantis.txt", "r");
+
+    // ==========================================
+    // DEBUGGING PRINTS 1 (TO BE REMOVED)
+
+    nDeckIdx = 0;
+    printf("\n\nGame Deck before deckInit()\n");
+    while (nDeckIdx != MAX_CARDS)
+    {
+        nCardBackIdx = 0;
+        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
+        nDeckIdx++;
+    }
+    // ==========================================
+
     nCardNum = deckInit(theGame.nPlyrCtr, fCards, currPlayers, theGame);
     fclose(fCards);
 
