@@ -25,7 +25,8 @@
 */
 
 
-#include "defs.h"
+// #include "defs.h"
+#include "gamefunctionsCopy.c"
 
 // FUNCTION DECLARATIONS
 
@@ -37,7 +38,9 @@
 */
 void startGame()
 {
-    printf("You are Starting the Game.");
+ 
+    runGame();
+    
 }
 
 // Game Control

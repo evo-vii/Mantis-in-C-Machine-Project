@@ -160,8 +160,8 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
  
     The function displayDeck() cycles through the current players' card's front face
     to sort the cards into a respective player's array of color-coded cards. This function
-    acts as a snapshot update of the players' card list and does not dynamically updates
-    as the game runs. This function is to be called after every move and change in the
+    acts as a snapshot update of the players' card list and does not dynamically update
+    as the game runs. This function is to be called after every move and changes the
     amount of cards a player has.
 
     Precondition: This is a helper function, thus, there are no other values to be changed.
@@ -170,10 +170,20 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
     @param theGame - This is the main control structure of the game, containing relevant information such as the game's deck and player count.
 
 */
-void displayDeck(PlayerData currPlayers[], GameState theGame)
+void displayDeck(PlayerData currPlayers[], GameState theGame) // CONTAINS ERRORS, DOUBLES CARD COUNT
 {
     int nPlyrIdx;
     int nCtr;
+
+    printf("\n");
+
+    for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
+    {
+        for (nCtr = 0; nCtr < COLORS; nCtr++)
+        {
+            currPlayers[nPlyrIdx].theDeck.nColorCards[nCtr] = 0;
+        }
+    }
 
     for(nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
     {
@@ -198,8 +208,10 @@ void displayDeck(PlayerData currPlayers[], GameState theGame)
             }
         }
 
-        printf("P%d-%s => [ R: %d | O: %d | Y: %d | G: %d | B: %d | I: %d | V: %d ] // S:%d\n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName, currPlayers[nPlyrIdx].theDeck.nColorCards[0], currPlayers[nPlyrIdx].theDeck.nColorCards[1], currPlayers[nPlyrIdx].theDeck.nColorCards[2], currPlayers[nPlyrIdx].theDeck.nColorCards[3], currPlayers[nPlyrIdx].theDeck.nColorCards[4], currPlayers[nPlyrIdx].theDeck.nColorCards[5], currPlayers[nPlyrIdx].theDeck.nColorCards[6], currPlayers[nPlyrIdx].theDeck.nScoreAmt);
+        printf("P%d => [ R: %d | O: %d | Y: %d | G: %d | B: %d | I: %d | V: %d ] // S:%d\n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].theDeck.nColorCards[0], currPlayers[nPlyrIdx].theDeck.nColorCards[1], currPlayers[nPlyrIdx].theDeck.nColorCards[2], currPlayers[nPlyrIdx].theDeck.nColorCards[3], currPlayers[nPlyrIdx].theDeck.nColorCards[4], currPlayers[nPlyrIdx].theDeck.nColorCards[5], currPlayers[nPlyrIdx].theDeck.nColorCards[6], currPlayers[nPlyrIdx].theDeck.nScoreAmt);
     }
+
+    printf("\n");
 }
 
 /** 
@@ -211,6 +223,8 @@ void displayDeck(PlayerData currPlayers[], GameState theGame)
     @param fPtr - The file pointer accessing "mantis.txt".
     @param currPlayers - The player list containing all players for a running match.
     @param theGame - This is the main control structure of the game, containing relevant information such as the game's deck and player count.
+
+    Returns nCardNum - The index of the game's deck to continue incrementing after removing the dealt cards at initialization.
 
 */
 int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame) 
@@ -253,16 +267,6 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame
 
     shuffle(theGame.deck, MAX_CARDS, sizeof(Card), nSeed);
 
-    // DEBUGGING PRINTS (TO BE REMOVED)
-    nDeckIdx = 0;
-
-    while (nDeckIdx != MAX_CARDS)
-    {
-        nCardBackIdx = 0;
-        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
-        nDeckIdx++;
-    }
-
     // Distribute the cards to the players' TANK PILE
 
     nDeckIdx = 0;
@@ -296,44 +300,29 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame
     nCardNum = nDeckIdx;
 
     // Initializing additional variables
-
+    
     for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
     {
-        for (nCtr = 0; nCtr < COLORS; nCtr++)
-        {
-            currPlayers[nPlyrIdx].theDeck.nColorCards[nCtr] = 0;
-        }
-
         currPlayers[nPlyrIdx].theDeck.nScoreAmt = 0;
     }
 
+    // Showing Final Status of Player Tanks (For UI)
+
+    displayDeck(currPlayers, theGame);
+
+    // ==========================================
     // DEBUGGING PRINTS 2 (TO BE REMOVED)
 
     nDeckIdx = 0;
 
+    printf("\n\nGame Deck while inside deckInit()\n");
     while (nDeckIdx != MAX_CARDS)
     {
         nCardBackIdx = 0;
         printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
         nDeckIdx++;
     }
-
-    // CHECKING PLAYER DECKS (TO BE REMOVED)
-
-    for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
-    {
-        printf("\n[%d] The Tanks of %s: \n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName);
-
-        for (nCtr = 0; nCtr < currPlayers[nPlyrIdx].theDeck.nTankAmt; nCtr++)
-        {
-            nCardBackIdx = 0;
-            printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nCtr, currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront, currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal);
-        }
-    }
-
-    // Showing Final Status of Player Tanks (For UI)
-
-    displayDeck(currPlayers, theGame);
+    // ==========================================
 
     return nCardNum;
 }
@@ -342,45 +331,52 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame
 /*
     The function scoreFlow()...
 */
-int scoreFlow()
+void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nDeckIdx)
 {
+    int nCardBackIdx = 0;
 
+    currPlayers[nPlyrIdx].theDeck.tankPile[currPlayers[nPlyrIdx].theDeck.nTankAmt].cFront = theGame.deck[nDeckIdx].cFront;
+    currPlayers[nPlyrIdx].theDeck.tankPile[currPlayers[nPlyrIdx].theDeck.nTankAmt].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
+    currPlayers[nPlyrIdx].theDeck.tankPile[currPlayers[nPlyrIdx].theDeck.nTankAmt].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
+    currPlayers[nPlyrIdx].theDeck.tankPile[currPlayers[nPlyrIdx].theDeck.nTankAmt].cBack[nCardBackIdx+2] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+2];
 
-    return 999;
+    currPlayers[nPlyrIdx].theDeck.nTankAmt++;    
 }
 
 /*
     The function stealFlow()...
 */
-int stealFlow()
+void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nDeckIdx)
 {
 
 
-    return 999;
+    
 }
 
 /*
     The function runGame()...
 */
 void runGame()
-{
-
-}
-
-
-int main() // THIS IS A TEST MAIN FUNCTION FOR DEBUGGING PURPOSES ONLY. TO BE REMOVED ON FINAL DEVELOPMENT.
-{
+{   
     
+    // Declarations
+
     FILE* fPlayers;
     FILE* fCards;
     PlayerData currPlayers[PLAYER_MAX];
     GameState theGame;
+
+    int nCardNum = 0; // The index to start at after card dealing.
+    int nRoundCtr = 0; // A counter for the number of rounds occurred within the game.
+    int nGameSignal = 1; // Can only be '1' or '0'. Signals the game's start or end.
     
-    int nCardNum; // Remaining cards within the deck.
-    int nRoundCtr; // A counter for the number of rounds occurred within the game.
+    int nPlyrIdx; // Player Index Number
+    int nDeckIdx; // Game Deck Index Number
+    int nCardBackIdx; // Index of Card's Back Colors
+
+    int nChoice; // Can only be '1' or '2'. Choice of the player to score or steal. 1 = Score, 2 = Steal.
 
     // Initialization Processes
-
     initRandom();
 
     fPlayers = fopen("players.txt", "r");
@@ -393,12 +389,68 @@ int main() // THIS IS A TEST MAIN FUNCTION FOR DEBUGGING PURPOSES ONLY. TO BE RE
     nCardNum = deckInit(theGame.nPlyrCtr, fCards, currPlayers, theGame);
     fclose(fCards);
 
-    printf("\nNEXT CARD STARTS AT IDX: %d\n", nCardNum);
+    if (nCardNum > 0)
+        nGameSignal = 0;
+
+    printf("\nNEXT CARD STARTS AT IDX: %d\n", nCardNum); // To be removed.
+
+    // ==========================================
+    // DEBUGGING PRINTS 3 (TO BE REMOVED)
+
+    nDeckIdx = nCardNum;
+    printf("\n\nGame Deck after deckInit()\n");
+    while (nDeckIdx != MAX_CARDS)
+    {
+        nCardBackIdx = 0;
+        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
+        nDeckIdx++;
+    }
+    // ==========================================
 
     // Game Proper
+    printf("\n\n[LET THE GAMES BEGIN!]\n");
+    nDeckIdx = nCardNum;
+    nRoundCtr = 1;
 
-    printf("\n\n[LET THE GAMES BEGIN!]\n\n");
+    while (nGameSignal != 1)
+    {
+        printf("\n[ ROUND %d ]\n\n", nRoundCtr);  
+        
+        for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
+        {
+            nCardBackIdx = 0;
+            
+            displayDeck(currPlayers, theGame);
+            printf("Top Deck: %c%c%c (%d cards remaining in deck)\n\n", theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], MAX_CARDS-nCardNum);
 
+            printf("Your move, Player %d (%s)\n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName);
+            printf("    [1] Score\n");
+            printf("    [2] Steal\n");
 
-    return 0;
+            do
+            {
+                printf("\n>> ");
+                scanf("%d", &nChoice);
+
+                if (nChoice > 2 || nChoice < 1)
+                    printf("\nInvalid input! \'1\' or \'2\' only!");
+
+            } while (nChoice > 2 || nChoice < 1);
+
+            if (nChoice == 1)
+            {
+                // Score Flow
+                scoreFlow(currPlayers, theGame, nPlyrIdx, nDeckIdx);
+
+            }
+            else if (nChoice == 2)
+            {
+                // Steal Flow
+                stealFlow(currPlayers, theGame, nPlyrIdx, nDeckIdx);
+            }
+
+        }
+
+        nRoundCtr++;
+    }
 }
