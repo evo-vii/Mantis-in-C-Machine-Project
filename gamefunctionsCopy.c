@@ -22,6 +22,8 @@
 
     @param currPlayers - The player list containing all players for a running match.
     @param fPtr - The file pointer accessing "players.txt".
+
+    Returns nCount - The total number of players that will participate in a match.
 */
 int playerInit(PlayerData currPlayers[], FILE* fPtr)
 {
@@ -120,11 +122,9 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
         }
         else
         {
-            // Find a way to load the character data from the text file to the character sheet. Use Player Tag to determine player choice.
-
             if (nChoice == 1)
             {
-                currPlayers[nCurrIdx].nPNum = nCtr;
+                currPlayers[nCurrIdx].nPNum = nCtr+1;
                 strcpy(currPlayers[nCurrIdx].playerName, BufferList[0].playerName);
                 currPlayers[nCurrIdx].nGameWins = BufferList[0].nGameWins;
                 currPlayers[nCurrIdx].nScoreMax = BufferList[0].nScoreMax;
@@ -133,7 +133,7 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
             }
             else if (nChoice == 2)
             {
-                currPlayers[nCurrIdx].nPNum = nCtr;
+                currPlayers[nCurrIdx].nPNum = nCtr+1;
                 strcpy(currPlayers[nCurrIdx].playerName, BufferList[1].playerName);
                 currPlayers[nCurrIdx].nGameWins = BufferList[1].nGameWins;
                 currPlayers[nCurrIdx].nScoreMax = BufferList[1].nScoreMax;
@@ -156,20 +156,74 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
     return nCount;
 }
 
+/**
+ 
+    The function displayDeck() cycles through the current players' card's front face
+    to sort the cards into a respective player's array of color-coded cards. This function
+    acts as a snapshot update of the players' card list and does not dynamically updates
+    as the game runs. This function is to be called after every move and change in the
+    amount of cards a player has.
 
+    Precondition: This is a helper function, thus, there are no other values to be changed.
 
-/*
-    The function deckInit() // DEVNOTE-Lance: WARNING! LINE 50-142 IS AI GENERATED CODE, PLEASE RE-PROGRAM AS SOON AS POSSIBLE!
+    @param currPlayers - The player list containing all players for a running match.
+    @param theGame - This is the main control structure of the game, containing relevant information such as the game's deck and player count.
+
 */
-void deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame) 
+void displayDeck(PlayerData currPlayers[], GameState theGame)
+{
+    int nPlyrIdx;
+    int nCtr;
+
+    for(nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
+    {
+        for (nCtr = 0; nCtr < currPlayers[nPlyrIdx].theDeck.nTankAmt; nCtr++)
+        {
+            switch (currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront)
+            {
+                case 'R': currPlayers[nPlyrIdx].theDeck.nColorCards[0] += 1;
+                    break;
+                case 'O': currPlayers[nPlyrIdx].theDeck.nColorCards[1] += 1;
+                    break;
+                case 'Y': currPlayers[nPlyrIdx].theDeck.nColorCards[2] += 1;
+                    break;
+                case 'G': currPlayers[nPlyrIdx].theDeck.nColorCards[3] += 1;
+                    break;
+                case 'B': currPlayers[nPlyrIdx].theDeck.nColorCards[4] += 1;
+                    break;
+                case 'I': currPlayers[nPlyrIdx].theDeck.nColorCards[5] += 1;
+                    break;
+                case 'V': currPlayers[nPlyrIdx].theDeck.nColorCards[6] += 1;
+                    break;
+            }
+        }
+
+        printf("P%d-%s => [ R: %d | O: %d | Y: %d | G: %d | B: %d | I: %d | V: %d ] // S:%d\n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName, currPlayers[nPlyrIdx].theDeck.nColorCards[0], currPlayers[nPlyrIdx].theDeck.nColorCards[1], currPlayers[nPlyrIdx].theDeck.nColorCards[2], currPlayers[nPlyrIdx].theDeck.nColorCards[3], currPlayers[nPlyrIdx].theDeck.nColorCards[4], currPlayers[nPlyrIdx].theDeck.nColorCards[5], currPlayers[nPlyrIdx].theDeck.nColorCards[6], currPlayers[nPlyrIdx].theDeck.nScoreAmt);
+    }
+}
+
+/** 
+    The function deckInit() utilizes the mantis.txt text file and imports the data into the
+    game's internal card deck and shuffles it. Then, the first tank cards are distributed to each 
+    of the players by an amount defined by the constant "CARD_DEAL".
+
+    @param nCount - Total number of players in a match.
+    @param fPtr - The file pointer accessing "mantis.txt".
+    @param currPlayers - The player list containing all players for a running match.
+    @param theGame - This is the main control structure of the game, containing relevant information such as the game's deck and player count.
+
+*/
+int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGame) 
 {
 
     int nDeckIdx = 0; // Index of card deck
     int nCardBackIdx; // Index of the card's back colors
     char cTemp; // Placeholder for reading newlines.
+    int nPlyrIdx = 0; // Index of player roster.
 
     int nSeed = randomInt(); // Randomizer Seed
     int nCtr; // A local counter variable for looping
+    int nCardNum; // Remaining cards within the game deck.
 
     // Read mantis.txt, and store all cards to the game's deck array.
     while (feof(fPtr) == 0)
@@ -199,7 +253,7 @@ void deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGam
 
     shuffle(theGame.deck, MAX_CARDS, sizeof(Card), nSeed);
 
-    // DEBUGGING PRINTS
+    // DEBUGGING PRINTS (TO BE REMOVED)
     nDeckIdx = 0;
 
     while (nDeckIdx != MAX_CARDS)
@@ -213,11 +267,75 @@ void deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGam
 
     nDeckIdx = 0;
 
-    for (nCtr = 0; nCtr < CARD_DEAL; nCtr++)
+    for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
     {
+        currPlayers[nPlyrIdx].theDeck.nTankAmt = 0;
         
+        for (nCtr = 0; nCtr < CARD_DEAL; nCtr++)
+        {
+            nCardBackIdx = 0;
+            
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+2];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
+
+
+            theGame.deck[nDeckIdx].cFront = '\0';
+            theGame.deck[nDeckIdx].cBack[nCardBackIdx] = '\0';
+            theGame.deck[nDeckIdx].cBack[nCardBackIdx + 1] = '\0';
+            theGame.deck[nDeckIdx].cBack[nCardBackIdx + 2] = '\0';
+            theGame.deck[nDeckIdx].nPointVal = 0;
+
+            currPlayers[nPlyrIdx].theDeck.nTankAmt++;
+            nDeckIdx++;
+        }
     }
     
+    nCardNum = nDeckIdx;
+
+    // Initializing additional variables
+
+    for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
+    {
+        for (nCtr = 0; nCtr < COLORS; nCtr++)
+        {
+            currPlayers[nPlyrIdx].theDeck.nColorCards[nCtr] = 0;
+        }
+
+        currPlayers[nPlyrIdx].theDeck.nScoreAmt = 0;
+    }
+
+    // DEBUGGING PRINTS 2 (TO BE REMOVED)
+
+    nDeckIdx = 0;
+
+    while (nDeckIdx != MAX_CARDS)
+    {
+        nCardBackIdx = 0;
+        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
+        nDeckIdx++;
+    }
+
+    // CHECKING PLAYER DECKS (TO BE REMOVED)
+
+    for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
+    {
+        printf("\n[%d] The Tanks of %s: \n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName);
+
+        for (nCtr = 0; nCtr < currPlayers[nPlyrIdx].theDeck.nTankAmt; nCtr++)
+        {
+            nCardBackIdx = 0;
+            printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nCtr, currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront, currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal);
+        }
+    }
+
+    // Showing Final Status of Player Tanks (For UI)
+
+    displayDeck(currPlayers, theGame);
+
+    return nCardNum;
 }
 
 
@@ -226,6 +344,7 @@ void deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState theGam
 */
 int scoreFlow()
 {
+
 
     return 999;
 }
@@ -256,6 +375,11 @@ int main() // THIS IS A TEST MAIN FUNCTION FOR DEBUGGING PURPOSES ONLY. TO BE RE
     FILE* fCards;
     PlayerData currPlayers[PLAYER_MAX];
     GameState theGame;
+    
+    int nCardNum; // Remaining cards within the deck.
+    int nRoundCtr; // A counter for the number of rounds occurred within the game.
+
+    // Initialization Processes
 
     initRandom();
 
@@ -266,18 +390,14 @@ int main() // THIS IS A TEST MAIN FUNCTION FOR DEBUGGING PURPOSES ONLY. TO BE RE
     printf("\nTOTAL PLAYER COUNT: %d\n", theGame.nPlyrCtr); // To be removed.
 
     fCards = fopen("mantis.txt", "r");
-    deckInit(theGame.nPlyrCtr, fCards, currPlayers, theGame);
+    nCardNum = deckInit(theGame.nPlyrCtr, fCards, currPlayers, theGame);
     fclose(fCards);
 
+    printf("\nNEXT CARD STARTS AT IDX: %d\n", nCardNum);
 
-    // Player Count Variable
-    
-    // GameState game;
+    // Game Proper
 
-    // deckinit(&game, nPlyrCnt);
-    // displayState(&game);
-
-    // Actual Game Run
+    printf("\n\n[LET THE GAMES BEGIN!]\n\n");
 
 
     return 0;

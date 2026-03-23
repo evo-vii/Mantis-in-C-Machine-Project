@@ -42,11 +42,11 @@ typedef struct GameBase
 typedef struct PDeck
 {
     int nTankAmt;
-    Card TankPile[MAX_CARDS];
+    int nColorCards[COLORS];
+    Card tankPile[MAX_CARDS];
 
     int nScoreAmt;
-    Card ScorePile[MAX_CARDS];
-
+    Card scorePile[MAX_CARDS];
 } PlayerDeck;
 
 typedef struct PDT
@@ -55,7 +55,7 @@ typedef struct PDT
     int nPNum;
     int nScoreMax;
     int nGameWins;
-    PlayerDeck TheDeck;
+    PlayerDeck theDeck;
 
 } PlayerData;
 
