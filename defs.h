@@ -46,6 +46,7 @@ typedef struct PDeck
     Card tankPile[MAX_CARDS];
 
     int nScoreAmt;
+    int nCurrScore;
     Card scorePile[MAX_CARDS];
 } PlayerDeck;
 
