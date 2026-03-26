@@ -7,29 +7,17 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/23/2026
+ *  Last Modified   : 03/26/2026
  *  Acknowledgments : w3schools.com
 ******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.0.9 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
-
-    Primary
-    - Linked gamefunctions.c to mp.c.
-    - Updated mainMenu() menu controls.
-    - Established recursive systems in mainMenu() to prevent premature program termination.
-    - Removed inclusion of defs.h as it clashes with the inclusion of gamefunctions.c
+    PATCH NOTES In-dev 0.1.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
     
     In gamefunctions.c
-    - Revised playerInit().
-    - Established deckInit().
-    - Built runGame().
-    - Built scoreFlow().
+    - Revised scoreFlow().
+    - Established stealFlow().
     
-    In defs.h
-    - Redefined the Player Number as an integer.
-    - Redefined GameState.
-    - Created PlayerDeck.
 */
 
 
@@ -46,7 +34,7 @@
 void startGame()
 {
  
-    runGame();
+    runGame(nWinScore);
     
 }
 
@@ -75,6 +63,7 @@ void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
 {
 
     int nSelection;
+    int nWinScore = 20;
 
     printf("\nWelcome to MANTIS\n");
     printf("Version In-dev 0.0.1\n\n");
