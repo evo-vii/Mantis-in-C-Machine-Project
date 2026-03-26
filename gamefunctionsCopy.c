@@ -177,6 +177,8 @@ void displayDeck(PlayerData currPlayers[], GameState theGame) // CONTAINS ERRORS
 
     printf("\n");
 
+    // To avoid overcounting, nColorCards is set to 0 at every call before checking card colors.
+
     for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
     {
         for (nCtr = 0; nCtr < COLORS; nCtr++)
@@ -318,23 +320,28 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState *theGam
 /*
     The function scoreFlow()...
 */
-void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nDeckIdx) // DEVNOTE-LANCE: Make sure to make print debug statements to check the status of array members.
+void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nDeckIdx/*, int *nScoreIdx*/) // DEVNOTE-LANCE: Make sure to make print debug statements to check the status of array members.
 {
     int nCardBackIdx = 0;
-    int nScoreIdx = 0;
     int nCtr;
 
-    int nChecker = currPlayers[nPlyrIdx].theDeck.nScoreAmt;
+    int nChecker = currPlayers[nPlyrIdx].theDeck.nScoreAmt; // Compares against current nScoreAmt after STAGE I is complete.
+    int nFlag = 0; // Stays 0 at STAGE II if the tank card was not slotted into a nulled slot. This means, the next empty tank index slot is to be utilized. If non-zero, card was successfully slotted at a null slot.
+
+    int nDeckTester; // FOR DEBUGGING PURPOSES
+    int nScoreIdx = 0;
 
     printf("Resolving turn for Player %d...\n", currPlayers[nPlyrIdx].nPNum);
     printf("- %s draws a card and it is: %c\n", currPlayers[nPlyrIdx].playerName, theGame.deck[nDeckIdx].cFront);
 
-    // Checks if drawn card is present in any of the player's tank pile.
+    // STAGE I: Checks if drawn card is present in any of the player's tank pile.
 
     for (nCtr = 0; nCtr < currPlayers[nPlyrIdx].theDeck.nTankAmt; nCtr++)
     {
         if (currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront == theGame.deck[nDeckIdx].cFront) // If a tank card is similar to the drawn card.
         {
+            currPlayers[nPlyrIdx].theDeck.nScoreAmt++; // Increments the amount of cards in the score pile.
+            
             // Slots the tank card into the score pile.
             currPlayers[nPlyrIdx].theDeck.scorePile[nScoreIdx].cFront = currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront;
             currPlayers[nPlyrIdx].theDeck.scorePile[nScoreIdx].cBack[nCardBackIdx] = currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx];
@@ -344,20 +351,40 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
 
             // Adds the point value of the eligible tank card in the player's score.
             currPlayers[nPlyrIdx].theDeck.nCurrScore += currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal;
-            currPlayers[nPlyrIdx].theDeck.nScoreAmt++; // Increments the amount of cards in the score pile.
 
-            // nScoreIdx++;
+            nScoreIdx++;
 
-            // Remove the eligible tank card from the player and adjust the list.
+            // "Nulls" the eligible tank card from the player.
 
-            // TO FINISH!!!!!
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = '\0';
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = '\0';
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = '\0';
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = '\0';
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = 0;
         }    
     }
+
+    // ==========================================
+    // DEBUGGING PRINTS 4 (TO BE REMOVED)
+
+    nDeckTester = 0;
+    printf("\n\nPlayer Deck at Stage I\n");
+    while (nDeckTester != currPlayers[nPlyrIdx].theDeck.nScoreAmt)
+    {
+        nCardBackIdx = 0;
+        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckTester, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cFront, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].nPointVal);
+        nDeckTester++;
+    }
+    // ==========================================
     
+    // STAGE II: Check if eligible tank card was present, if yes, add drawn card to score pile, otherwise, add to tank pile.
+
     if (nChecker < currPlayers[nPlyrIdx].theDeck.nScoreAmt) // If the score changes, it means there was an increase in the score pile.
     {
         // Slots the drawn card to the score pile.
-        // nScoreIdx++
+
+        currPlayers[nPlyrIdx].theDeck.nScoreAmt++; // Increments the amount of cards in the score pile.
+        // nScoreIdx++;
 
         currPlayers[nPlyrIdx].theDeck.scorePile[nScoreIdx].cFront = theGame.deck[nDeckIdx].cFront;
         currPlayers[nPlyrIdx].theDeck.scorePile[nScoreIdx].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
@@ -366,19 +393,80 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
         currPlayers[nPlyrIdx].theDeck.scorePile[nScoreIdx].nPointVal = theGame.deck[nDeckIdx].nPointVal;
         
         currPlayers[nPlyrIdx].theDeck.nCurrScore += theGame.deck[nDeckIdx].nPointVal; // Adds the point value of the drawn card.
-        currPlayers[nPlyrIdx].theDeck.nScoreAmt++; // Increments the amount of cards in the score pile.
+        
+        // ==========================================
+        // DEBUGGING PRINTS 4 (TO BE REMOVED)
+
+        nDeckTester = 0;
+        printf("\n\nPlayer Deck at Stage II: A SIDE\n");
+        while (nDeckTester != currPlayers[nPlyrIdx].theDeck.nScoreAmt)
+        {
+            nCardBackIdx = 0;
+            printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckTester, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cFront, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].nPointVal);
+            nDeckTester++;
+        }
+        // ==========================================
+
+
     }
     else // If score doesn't change, it means that the drawn card is to be added to the tank cards.
     {
-        // nCtr++;
+        
+        // Checks null spaces to occupy first before incrementing to the next empty tank index.
+        for (nCtr = 0; nCtr < currPlayers[nPlyrIdx].theDeck.nTankAmt; nCtr++)
+        {
+            if (currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront == '\0' && currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] == '\0' && currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] == '\0' && currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] == '\0' && currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal == 0)
+            {
+                currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
+                currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
+                currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
+                currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+2];
+                currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
 
-        currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
-        currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
-        currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
-        currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+2];
-        currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
+                nFlag++;
+            }
+        }
 
-        currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
+        // ==========================================
+        // DEBUGGING PRINTS 5 (TO BE REMOVED)
+
+        nDeckTester = 0;
+        printf("\n\nPlayer Deck at Stage II: B SIDE SCORE\n");
+        while (nDeckTester != currPlayers[nPlyrIdx].theDeck.nScoreAmt)
+        {
+            nCardBackIdx = 0;
+            printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckTester, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cFront, currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.scorePile[nDeckTester].nPointVal);
+            nDeckTester++;
+        }
+        // ==========================================
+
+        // Otherwise, add the drawn card to the next empty tank index slot.
+
+        if (nFlag == 0)
+        {
+            currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
+
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+2];
+            currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
+
+            // ==========================================
+            // DEBUGGING PRINTS 6 (TO BE REMOVED)
+
+            nDeckTester = 0;
+            printf("\n\nPlayer Deck at Stage II: B SIDE TANK\n");
+            while (nDeckTester != currPlayers[nPlyrIdx].theDeck.nTankAmt)
+            {
+                nCardBackIdx = 0;
+                printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckTester, currPlayers[nPlyrIdx].theDeck.tankPile[nDeckTester].cFront, currPlayers[nPlyrIdx].theDeck.tankPile[nDeckTester].cBack[nCardBackIdx], currPlayers[nPlyrIdx].theDeck.tankPile[nDeckTester].cBack[nCardBackIdx+1], currPlayers[nPlyrIdx].theDeck.tankPile[nDeckTester].cBack[nCardBackIdx+2], currPlayers[nPlyrIdx].theDeck.tankPile[nDeckTester].nPointVal);
+                nDeckTester++;
+            }
+            // ==========================================
+        }
+
+
     }
 
     // Remove the drawn card from the game deck.
@@ -388,6 +476,19 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
     theGame.deck[nDeckIdx].cBack[nCardBackIdx+1] = '\0';
     theGame.deck[nDeckIdx].cBack[nCardBackIdx+2] = '\0';
     theGame.deck[nDeckIdx].nPointVal = 0;
+
+    // ==========================================
+    // DEBUGGING PRINTS 7 (TO BE REMOVED)
+
+    nDeckIdx = 0;
+    printf("\n\nGame Deck after score flow\n");
+    while (nDeckIdx != MAX_CARDS)
+    {
+        nCardBackIdx = 0;
+        printf("CARD IDX %d: Front: %c, Back: %c, %c, %c, Point Value: %d\n", nDeckIdx, theGame.deck[nDeckIdx].cFront, theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], theGame.deck[nDeckIdx].nPointVal);
+        nDeckIdx++;
+    }
+    // ==========================================
 
 }
 
@@ -421,13 +522,14 @@ void runGame()
     int nPlyrIdx; // Player Index Number
     int nDeckIdx; // Game Deck Index Number
     int nCardBackIdx; // Index of Card's Back Colors
+    //int nScoreIdx = 0; // Player's Score Pile Index
 
     int nChoice; // Can only be '1' or '2'. Choice of the player to score or steal. 1 = Score, 2 = Steal.
 
     // Winner Declarations
-    Username Winner; // Username of the winner.
-    int nWinScore; // The winner's score.
-    int nWinPNum; // Player number of the winner.
+    //Username Winner; // Username of the winner.
+    //int nWinScore; // The winner's score.
+    //int nWinPNum; // Player number of the winner.
 
     // Initialization Processes
     initRandom();
@@ -474,7 +576,7 @@ void runGame()
             nCardBackIdx = 0;
             
             displayDeck(currPlayers, theGame);
-            printf("Top Deck: %c%c%c (%d cards remaining in deck)\n\n", theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], MAX_CARDS-nCardNum);
+            printf("Top Deck: %c%c%c (%d cards remaining in deck)\n\n", theGame.deck[nDeckIdx].cBack[nCardBackIdx], theGame.deck[nDeckIdx].cBack[nCardBackIdx+1], theGame.deck[nDeckIdx].cBack[nCardBackIdx+2], MAX_CARDS-nDeckIdx);
 
             printf("Your move, Player %d (%s)\n", currPlayers[nPlyrIdx].nPNum, currPlayers[nPlyrIdx].playerName);
             printf("    [1] Score\n");
@@ -493,7 +595,7 @@ void runGame()
             if (nChoice == 1)
             {
                 // Score Flow
-                scoreFlow(currPlayers, theGame, nPlyrIdx, nDeckIdx);
+                scoreFlow(currPlayers, theGame, nPlyrIdx, nDeckIdx/*, &nScoreIdx*/);
 
             }
             else if (nChoice == 2)
@@ -511,6 +613,6 @@ void runGame()
 
     // Present the Winner (INCOMPLETE)
 
-    printf("\n\n[ VICTORY ACHIEVED! ]\n\n");
-    printf("With a score of %d, Player %d - (%s) has conquered the match!\n", nWinScore, nWinPNum, Winner);
+    //printf("\n\n[ VICTORY ACHIEVED! ]\n\n");
+    //printf("With a score of %d, Player %d - (%s) has conquered the match!\n", nWinScore, nWinPNum, Winner);
 }
