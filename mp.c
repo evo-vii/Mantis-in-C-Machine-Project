@@ -8,7 +8,7 @@
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
  *  Last Modified   : 03/26/2026
- *  Acknowledgments : w3schools.com
+ *  Acknowledgments : w3schools.com, Search and Sorting Algoritms (by Ms. Kalaw)
 ******************************************************************************/
 
 /*
@@ -31,7 +31,7 @@
     to begin processing the game flow including player initialization, deck preparation,
     game proper, and summarization of the game.
 */
-void startGame()
+void startGame(int nWinScore)
 {
  
     runGame(nWinScore);
@@ -66,7 +66,7 @@ void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
     int nWinScore = 20;
 
     printf("\nWelcome to MANTIS\n");
-    printf("Version In-dev 0.0.1\n\n");
+    printf("Version In-dev 0.1.0\n\n");
 
     printf("Main Menu\n");
     printf("    [1] New Game\n");
@@ -81,7 +81,7 @@ void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
 
         if (nSelection == 1)
         {
-            startGame();
+            startGame(nWinScore);
             mainMenu(); // Recursive Call
         }
         else if (nSelection == 2)

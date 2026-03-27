@@ -806,27 +806,48 @@ void runGame(int nWinScore)
     
     // Declarations
 
+    // Essentials
     FILE* fPlayers;
     FILE* fCards;
     PlayerData currPlayers[PLAYER_MAX];
     GameState theGame;
 
+    // Game Controls
     int nCardNum = 0; // The index to start at after card dealing.
     int nRoundCtr = 0; // A counter for the number of rounds occurred within the game.
     int nGameSignal = 1; // Can only be '1' or '0'. Signals the game's start or end.
     
+    // Essential Indexes
     int nPlyrIdx; // Player Index Number
     int nDeckIdx; // Game Deck Index Number
     int nCardBackIdx; // Index of Card's Back Colors
 
+    // Miscellaneous
     int nChoice; // Can only be '1' or '2'. Choice of the player to score or steal. 1 = Score, 2 = Steal.
+    int nGenCtr; // General Counter
 
     // Winner Variables
     int nWinTag;
     PlayerData Winners[PLAYER_MAX];
     int nWindex = 0;
-    //int nWinTankNum[]
+    int nWinFlag; // Represents the layer on how much the win condition is needed to be sort through.
     
+    // Sorting Algorithim Variables
+    int nI;
+    int nJ;
+    int nMin;
+    PlayerData Temp;
+    
+    // Null Player (For Placeholding Use)
+    PlayerData NullPlayer;
+
+    // Null Player Initializations
+    strcpy(NullPlayer.playerName, "NULL");
+    NullPlayer.nPNum = -999;
+    NullPlayer.nScoreMax = -999;
+    NullPlayer.nGameWins = -999;
+    NullPlayer.theDeck.nCurrScore = -999;
+    NullPlayer.theDeck.nTankAmt = -999;
 
     // Initialization Processes
     initRandom();
@@ -859,7 +880,7 @@ void runGame(int nWinScore)
     }
     // ==========================================
 
-    // Game Proper
+    // GAME PROPER
     printf("\n\n[LET THE GAMES BEGIN!]\n");
     nDeckIdx = nCardNum;
     nRoundCtr = 1;
@@ -910,36 +931,110 @@ void runGame(int nWinScore)
         // Setting the win conditions to flag nGameSignal to 1. Ceases the game regardless of potential tie.
         for (nPlyrIdx = 0; nPlyrIdx < theGame.nPlyrCtr; nPlyrIdx++)
         {
-            if (currPlayers[nPlyrIdx].theDeck.nCurrScore >= nWinScore)
+            if (currPlayers[nPlyrIdx].theDeck.nCurrScore >= nWinScore || nDeckIdx >= MAX_CARDS - 1)
             {
                 nGameSignal = 1; // Signals the game's end.
                 nWinTag++;
 
-                Winner[nWindex] = currPlayers[nPlyrIdx]; // Assigns eligible players to the winners' array.
+                printf("\nPASS THROUGH FIRST WIN CHECK\n"); // DEBUGGING
+
+                Winners[nWindex] = currPlayers[nPlyrIdx]; // Assigns eligible players to the winners' array.
+                printf("\nWINDEX USERNAME %d: %s, SCORE: %d\n", nWindex, Winners[nWindex].playerName, Winners[nWindex].theDeck.nCurrScore); // DEBUGGING
                 nWindex++;
+                
             }
         }
 
     }
 
-    // Setup for potential ties.
-    if (nWinTag > 1)
+    // Nullifying Empty Spaces within the Winners' Index
+    for (nGenCtr = nWindex; nGenCtr < PLAYER_MAX; nGenCtr++)
     {
-        for (nPlyrIdx = 0; nPlyrIdx < nWindex; nPlyrIdx++) // For all players, compare the number of tanks they have.
-        {
-            if (nPlyrIdx != 0)
-            {
-                if (currPlayers[nPlyrIdx - 1].theDeck.nCurrScore > currPlayers[nPlyrIdx].theDeck.nCurrScore)
+        Winners[nGenCtr] = NullPlayer;
+    }
 
-                // TO CONTINUE
+    // Sorting Algo BASED ON SCORE
+    for (nI = 0; nI < PLAYER_MAX; nI++)
+    {
+        nMin = nI;
+        for (nJ = nI+1; nJ < PLAYER_MAX; nJ++)
+        {
+            if (Winners[nMin].theDeck.nCurrScore > Winners[nJ].theDeck.nCurrScore)
+                nMin = nJ;
+        }
+
+        if (nI != nMin)
+        {
+            Temp = Winners[nI];
+            Winners[nI] = Winners[nMin];
+            Winners[nMin] = Temp;
+        }
+    }
+
+    // DEBUG PRINTS
+
+    for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
+    {
+        printf("\n AFTER SORT USERNAME %d: %s, SCORE: %d\n", nGenCtr, Winners[nGenCtr].playerName, Winners[nGenCtr].theDeck.nCurrScore);
+    }
+
+    if (nWinTag > 1) // Second layer of winners' comparison, if there are more than 1 players that achieved the Winning Score.
+    {
+        nWinTag = 0;
+        
+        // COMPARING BY SCORE FIRST
+        for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
+        {
+            if (Winners[nGenCtr].theDeck.nCurrScore < Winners[nGenCtr + 1].theDeck.nCurrScore)
+            {                     
+                printf("\nYOU ARE INSIDE THE SCORE LAYER\n");
+                Winners[nGenCtr] = NullPlayer;
+                nWinTag++;
             }
         }
+
+        // Cleaning for leftover uneligible members in the array.
+        for (nGenCtr = PLAYER_MAX-1; nGenCtr > 0; nGenCtr--)
+        {
+            if (Winners[nGenCtr].theDeck.nCurrScore > Winners[nGenCtr - 1].theDeck.nCurrScore)
+        }
+
+        // COMPARISON BY TANKS
+        if (nWinTag > 1)
+        {
+            for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
+            {
+                if (Winners[nGenCtr].theDeck.nTankAmt < Winners[nGenCtr + 1].theDeck.nTankAmt)
+                {
+                    printf("\nYOU ARE INSIDE THE TANK LAYER\n");
+                    Winners[nGenCtr] = NullPlayer;
+                    nWinTag++;
+                }
+            }
+        }
+
+    }
+
+    // DEBUG PRINTS AFTER PROCESSES
+    for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
+    {
+        printf("\nFINAL WINDEXUSERNAME %d: %s, SCORE: %d\n", nGenCtr, Winners[nGenCtr].playerName, Winners[nGenCtr].theDeck.nCurrScore);
+    }
+
+    // FINAL VERDICT
+
+    for (nGenCtr = PLAYER_MAX-1; Winners[nGenCtr].nPNum != -999; nGenCtr--)
+    {
+        // Needs final layer of winner protection.
+        printf("\nFINAL WINNER: %s, SCORE: %d\n",  Winners[nGenCtr].playerName, Winners[nGenCtr].theDeck.nCurrScore);
     }
 
     // Present the Winner (INCOMPLETE)
 
     //printf("\n\n[ VICTORY ACHIEVED! ]\n\n");
     //printf("With a score of %d, Player %d - (%s) has conquered the match!\n", nWinScore, nWinPNum, Winner);
+
+    // Control Functions
 }
 
 /**
