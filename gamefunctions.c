@@ -470,7 +470,7 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
     int nFlag; // A checker for null slots in tank pile.
 
     // Initial Messages
-    printf("\nCHOOSE YOUR VICTIM! (Choose who to Steal from)\n");
+    printf("\nChoose the adversary you wish to steal from.\n");
 
     // Cycles through player selection of whom to steal from.
 
@@ -845,9 +845,6 @@ void runGame(int nWinScore, int nGameSeed)
         // COMPARISON BY TANKS
         if (nWinTag > 1)
         {
-
-            printf("\nAnd also their NUMBER OF SCORE CARDS...\n");
-
             for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
             {
                 if (Winners[nGenCtr].theDeck.nTankAmt < Winners[nGenCtr + 1].theDeck.nTankAmt)
@@ -862,12 +859,32 @@ void runGame(int nWinScore, int nGameSeed)
 
     // FINAL VERDICT
     printf("\n\n[ VICTORY ACHIEVED! ]\n\n");
+
+    printf("\nPresenting the Final Results:\n");
+
+    displayDeck(currPlayers, theGame);
+
     printf("\nHere are the Victor/s: \n");
 
     for (nGenCtr = PLAYER_MAX-1; Winners[nGenCtr].nPNum != -999; nGenCtr--)
     {
         printf("Player %d (%s), wins!\n",  Winners[nGenCtr].nPNum, Winners[nGenCtr].playerName);
     }
+
+    // Return to Main Menu
+
+    // Return to Previous Menus
+    printf("\nType \'1\' to return to the main menu and save player data.\n");
+    nChoice = 0;
+
+    do
+    {
+        printf("\n>> ");
+        scanf("%d", &nChoice);
+
+        if (nChoice != 1)
+            printf("\nInvalid input! Type \'1\' only!");
+    } while (nChoice != 1);
 }
 
 /**
