@@ -22,6 +22,7 @@
 #define COLORS 7
 #define PLAYER_MAX 6
 #define CARD_DEAL 4
+#define MAX_PLAYER_LOAD 50
 
 // Type Definitions
 typedef char Username[USERCHAR_MAX];
