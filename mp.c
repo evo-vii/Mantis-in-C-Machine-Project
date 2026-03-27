@@ -7,16 +7,24 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/26/2026
+ *  Last Modified   : 03/27/2026
  *  Acknowledgments : w3schools.com, Search and Sorting Algoritms (by Ms. Kalaw)
 ******************************************************************************/
 
 /*
-    PATCH NOTES In-dev 0.1.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES Beta 0.1.1 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
     
+    Primary
+    - Primary game flow has been established.
+    
+    In mp.c
+    - Began building settings() and topPlayers().
+
     In gamefunctions.c
-    - Revised scoreFlow().
-    - Established stealFlow().
+    - Established runGame().
+    - Removed Debugging Tools.
+    - Updated function comments for proper format.
+
     
 */
 
@@ -27,7 +35,7 @@
 
 // Game Proper
 /*
-    The function startGame() calls the helper functions from the fil "gamefunctions.c",
+    The function startGame() calls the helper functions from the file "gamefunctions.c",
     to begin processing the game flow including player initialization, deck preparation,
     game proper, and summarization of the game.
 */
@@ -42,24 +50,54 @@ void startGame(int nWinScore)
 
 /*
     The function settings() brings the user to access the program's settings wherein various
-    game preferences can be toggled and modified.
+    game preferences such as winning score, and randomizer seed can be configured.
 */
 void settings()
 {
-    printf("You are in the Settings Menu.");
+    int nChoice; // Choice tracker
+    
+    do
+    {
+        printf("\n[GAME SETTINGS]\n\n");
+        printf("    [1] Set Win Score\n");
+        printf("    [2] Set Randomizer Seed\n");
+
+        printf("\n\n>> ");
+        scanf("%d", &nChoice);
+
+        if (nChoice > 2 || nChoice < 1)
+            printf("\nInvalid input! \'1\' or \'2\' only!");
+    } while (nChoice > 2 || nChoice < 1);
+
+    if (nChoice == 1)
+    {
+
+    }
+    else if (nChoice == 2)
+    {
+        
+    }
+
 }
 
 /*
-    The function topPlayers() brings the user to access the leaderboard from the last few
-    games of Mantis.
+    The function topPlayers() brings the user to access the Mantis leaderboard.
+    This is simply a display function, utilizing file access to retrieve the
+    relevant data.
 */
 void topPlayers()
 {
+    FILE* fPlayers;
+    
     printf("\n[MANTIS TOP PLAYERS]\n");
     printf("(Based on Most Wins)\n");
+
+    // Start commands here.
+
+
 }
 
-void mainMenu() // TO BE TRANSFERRED TO MAIN IN THE FUTURE
+void mainMenu()
 {
 
     int nSelection;
