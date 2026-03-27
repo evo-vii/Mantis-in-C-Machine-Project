@@ -60,14 +60,4 @@ typedef struct PDT
 
 } PlayerData;
 
-// typedef struct GameStatus
-// {
-//     Card deck[MAX_CARDS];
-//     int deck_size;
-//     int draw_index; //next card in the draw pile
-//     int tanks[6][COLORS];
-//     int scores[6];
-//     int playercount;
-// } GameState;
-
 
