@@ -1,9 +1,9 @@
-GUSTAVE!                              5     10
-MAELLE!                               4     100
-LUNE!                                 1     1 
-SCIEL!                                2     1000
-MONOCCO!                              4     10
-VERSO!                                1     1
+GUSTAVE                               1     10
+MAELLE                                1     100
+LUNE                                  1     1 
+SCIEL                                 1     1000
+MONOCCO                               1     10
+VERSO                                 1     1
 ALINE                                 0     0
 ALINE                                 0     0
 RENOIR                                0     0
