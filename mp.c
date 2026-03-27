@@ -22,7 +22,8 @@
     In mp.c
     - Began building settings() and topPlayers().
     - Established Settings to Change Winning Score.
-    - 
+    - Established Settings to Change Randomizer Seed.
+    - Established Player Leaderboard.
 
     In gamefunctions.c
     - Established runGame().
@@ -31,8 +32,7 @@
 
     In defs.h
     - Removed original GameState structure.
-
-    
+    - Defined MAX_PLAYER_LOAD constant.
 */
 
 
@@ -107,6 +107,7 @@ void settings(int *nWinScore, int *nGameSeed)
 
         *nWinScore = nSetting;
 
+        // Return to Previous Menus
         printf("\nDo you wish to return to the Settings (Type \'1\') or the Main Menu? (Type \'0\')\n");
 
         nChoice = 0;
@@ -117,7 +118,7 @@ void settings(int *nWinScore, int *nGameSeed)
             scanf("%d", &nChoice);
 
             if (nChoice > 1 || nChoice < 0)
-                printf("\nInvalid input! \'1\' or \'2\' only!");
+                printf("\nInvalid input! \'1\' or \'0\' only!");
         } while (nChoice > 1 || nChoice < 0);
 
         if (nChoice == 1)
@@ -126,6 +127,41 @@ void settings(int *nWinScore, int *nGameSeed)
     }
     else if (nChoice == 2) // If the player chooses to configure the randomizer's seed.
     {
+
+        printf("\n[Configure Randomizer Seed]\n");
+        printf("Current Randomizer Seed: %d\n", *nGameSeed);
+
+        do
+        {
+            printf("\nSet Randomizer Seed (A number from 0 - 99)\n");
+            printf(">> ");
+            scanf("%d", &nSetting);
+
+            if (nSetting > 99 || nSetting < 0)
+                printf("\nInvalid input! Follow the minimum and maximum allowed values!\n");
+
+        } while (nSetting > 99 || nSetting < 0);
+
+        printf("\nYou set the Randomizer Seed to: %d\n", nSetting);
+
+        *nGameSeed = nSetting;
+
+        // Return to Previous Menus
+        printf("\nDo you wish to return to the Settings (Type \'1\') or the Main Menu? (Type \'0\')\n");
+
+        nChoice = 0;
+
+        do
+        {
+            printf("\n>> ");
+            scanf("%d", &nChoice);
+
+            if (nChoice > 1 || nChoice < 0)
+                printf("\nInvalid input! \'1\' or \'0\' only!");
+        } while (nChoice > 1 || nChoice < 0);
+
+        if (nChoice == 1)
+            settings(nWinScore, nGameSeed);
 
     }
 
@@ -138,13 +174,78 @@ void settings(int *nWinScore, int *nGameSeed)
 */
 void topPlayers()
 {
-    //FILE* fPlayers;
+    // Basic Variables
+    FILE* fPlayers;
+    PlayerData BufferList[MAX_PLAYER_LOAD];
+    int nStructIdx;
+    int nIdx2;
+    int nPlace = 1;
+
+    int nChoice; // Choice Tracker
+
+    // Sorting Algorithm Variables
+    int nI;
+    int nJ;
+    int nMin;
+    PlayerData Temp;
     
+    // Start commands here.
+    fPlayers = fopen("players.txt", "r"); // Open File
+
+    // Load all players in a temporary PlayerData structure array.
+    for (nStructIdx = 0; feof(fPlayers) == 0; nStructIdx++)
+    {
+        fscanf(fPlayers, "%s", BufferList[nStructIdx].playerName);
+
+        fseek(fPlayers, USERCHAR_MAX-sizeof(BufferList[nStructIdx].playerName), SEEK_CUR);
+        fscanf(fPlayers, "%d", &BufferList[nStructIdx].nGameWins);
+
+        fseek(fPlayers, 5, SEEK_CUR);
+        fscanf(fPlayers, "%d", &BufferList[nStructIdx].nScoreMax);
+    }
+
+    // Sort all Array members in ascending order based on Game Wins.
+    for (nI = 0; nI < nStructIdx; nI++)
+    {
+        nMin = nI;
+        for (nJ = nI+1; nJ < nStructIdx; nJ++)
+        {
+            if (BufferList[nMin].nGameWins > BufferList[nJ].nGameWins)
+                nMin = nJ;
+        }
+
+        if (nI != nMin)
+        {
+            Temp = BufferList[nI];
+            BufferList[nI] = BufferList[nMin];
+            BufferList[nMin] = Temp;
+        }
+    }
+
+    // Display actual leaderboard.
     printf("\n[MANTIS TOP PLAYERS]\n");
     printf("(Based on Most Wins)\n");
 
-    // Start commands here.
+    printf("\n(If you aren't here, you probably need to get good.)\n\n");
 
+    for (nIdx2 = nStructIdx-1; nIdx2 > nStructIdx-11; nIdx2--)
+    {
+        printf("[%d] %s | All-time Wins: %d\n", nPlace, BufferList[nIdx2].playerName, BufferList[nIdx2].nGameWins);
+        nPlace++;
+    }
+
+    // Return to Previous Menu
+    printf("\nType \'1\' to return to the main menu.\n");
+    nChoice = 0;
+
+    do
+    {
+        printf("\n>> ");
+        scanf("%d", &nChoice);
+
+        if (nChoice != 1)
+            printf("\nInvalid input! Type \'1\' only!");
+    } while (nChoice != 1);
 
 }
 
