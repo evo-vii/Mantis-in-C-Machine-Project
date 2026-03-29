@@ -31,11 +31,17 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
     int nCount; // Total Count of Players
     int nCtr; // General Loop Counter
     int nCtr2;
+    //int nCtr3;
 
     int nChoice; // User choice when asked to choose in creating or selecting player.
-    PlayerData BufferList[3]; // Buffer list of players pending to be selected.
+    PlayerData BufferList[MAX_PLAYER_LOAD]; // Buffer list of players pending to be selected.
     int nCurrIdx; // Struct Index for the Current Players structure.
     int nPrintCtr; // Space Counter for appending players.
+
+    PlayerData TempList[MAX_PLAYER_LOAD];
+    int nTempIdx = 0;
+
+    int nExists = 0;
 
     // Initial asking for player count.
     do
@@ -59,7 +65,7 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
         printf("Select Player %d\n", nCtr+1);
 
         // Cylces through player list.
-        for (nCtr2 = 0; nCtr2 < 3; nCtr2++)
+        for (nCtr2 = 0; feof(fPtr) == 0; nCtr2++)
         {
             if (nCtr2 == 0)
                 printf("[%d] <Add new player>\n", nCtr2);
@@ -87,10 +93,13 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
             printf("\n>> ");
             scanf("%d", &nChoice);
 
-            if (nChoice > 2 || nChoice < 0)
+            if (nChoice > nCtr2-1 || nChoice < 0)
                 printf("\nInvalid Input! Pick from the choices only!\n");
 
-        } while (nChoice > 2 || nChoice < 0);
+            if (nChoice == 0 && nCtr2 >= MAX_PLAYER_LOAD-1)
+                printf("\nYou cannot add any more players! Max player capacity: %d\n", MAX_PLAYER_LOAD);
+
+        } while (nChoice > nCtr2-1 || nChoice < 0 || (nChoice == 0 && nCtr2 >= MAX_PLAYER_LOAD-1));
 
         if (nChoice == 0) // If player chooses to create a new player.
         {
@@ -99,9 +108,29 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
                 printf("\n\nEnter New Player Username (Max Character Length: 36): ");
                 scanf("%s", currPlayers[nCurrIdx].playerName);
 
+                fseek(fPtr, 0, SEEK_SET);
+
+                for (nTempIdx = 0; feof(fPtr) == 0; nTempIdx++)
+                {
+                    fscanf(fPtr, "%s", TempList[nTempIdx].playerName);
+
+                    fseek(fPtr, USERCHAR_MAX-sizeof(TempList[nTempIdx].playerName), SEEK_CUR);
+                    fscanf(fPtr, "%d", &TempList[nTempIdx].nGameWins);
+
+                    fseek(fPtr, 5, SEEK_CUR);
+                    fscanf(fPtr, "%d", &TempList[nTempIdx].nScoreMax);
+            
+                    if (strcmp(TempList[nTempIdx].playerName, currPlayers[nCurrIdx].playerName) == 0)
+                        nExists = 1;
+                }
+
                 if (strlen(currPlayers[nCurrIdx].playerName) > USERCHAR_MAX)
                     printf("\nInvalid Name Length! Max Characters: 36 Only!\n");
-            } while (strlen(currPlayers[nCurrIdx].playerName) > USERCHAR_MAX);
+
+                if (nExists == 1)
+                    printf("\nThis player already exists! Try a different name.\n");
+
+            } while (strlen(currPlayers[nCurrIdx].playerName) > USERCHAR_MAX || nExists == 1);
 
             // Adds new player to current roster of players.
             currPlayers[nCurrIdx].nPNum = nCtr+1;
@@ -132,25 +161,20 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
         }
         else
         {
-            if (nChoice == 1)
-            {
-                currPlayers[nCurrIdx].nPNum = nCtr+1;
-                strcpy(currPlayers[nCurrIdx].playerName, BufferList[0].playerName);
-                currPlayers[nCurrIdx].nGameWins = BufferList[0].nGameWins;
-                currPlayers[nCurrIdx].nScoreMax = BufferList[0].nScoreMax;
-
-                nCurrIdx++;
-            }
-            else if (nChoice == 2)
-            {
-                currPlayers[nCurrIdx].nPNum = nCtr+1;
-                strcpy(currPlayers[nCurrIdx].playerName, BufferList[1].playerName);
-                currPlayers[nCurrIdx].nGameWins = BufferList[1].nGameWins;
-                currPlayers[nCurrIdx].nScoreMax = BufferList[1].nScoreMax;
-                
-                nCurrIdx++;
+            for (nStructIdx = 0; nStructIdx < nCtr2; nStructIdx++)
+            {    
+                if (nChoice == nStructIdx+1)
+                {
+                    currPlayers[nCurrIdx].nPNum = nCtr+1;
+                    strcpy(currPlayers[nCurrIdx].playerName, BufferList[nStructIdx].playerName);
+                    currPlayers[nCurrIdx].nGameWins = BufferList[nStructIdx].nGameWins;
+                    currPlayers[nCurrIdx].nScoreMax = BufferList[nStructIdx].nScoreMax;
+                    nCurrIdx++;
+                }
             }
         }
+
+        fseek(fPtr, 0, SEEK_SET);
         
     }
 
