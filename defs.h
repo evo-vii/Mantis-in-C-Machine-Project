@@ -42,7 +42,8 @@ typedef struct GameBase
 
 typedef struct PDeck
 {
-    int nTankAmt;
+    int nTankAmt; // Tank Array Indexer
+    int nTankCtr; // Actual Number of Tank Cards
     int nColorCards[COLORS];
     Card tankPile[MAX_CARDS];
 
