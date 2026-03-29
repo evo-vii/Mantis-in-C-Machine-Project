@@ -4,7 +4,7 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/11/2026
+ *  Last Modified   : 03/29/2026
 ******************************************************************************/
 
 #include "defs.h"
@@ -40,8 +40,12 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
     // Initial asking for player count.
     do
     {
-        printf("How many players?: ");
+        printf("How many players? (Min: 3, Max: 6): ");
         scanf("%d", &nCount);
+
+        if (nCount > 6 || nCount < 3)
+            printf("\nInvalid Input! Follow the minimum and maximum range only!\n");
+
     } while (nCount > 6 || nCount < 3);
 
     nCurrIdx = 0;
@@ -82,14 +86,21 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
         {
             printf("\n>> ");
             scanf("%d", &nChoice);
+
+            if (nChoice > 2 || nChoice < 0)
+                printf("\nInvalid Input! Pick from the choices only!\n");
+
         } while (nChoice > 2 || nChoice < 0);
 
         if (nChoice == 0) // If player chooses to create a new player.
         {
             do
             {
-                printf("\n\nEnter New Player Username: ");
+                printf("\n\nEnter New Player Username (Max Character Length: 36): ");
                 scanf("%s", currPlayers[nCurrIdx].playerName);
+
+                if (strlen(currPlayers[nCurrIdx].playerName) > USERCHAR_MAX)
+                    printf("\nInvalid Name Length! Max Characters: 36 Only!\n");
             } while (strlen(currPlayers[nCurrIdx].playerName) > USERCHAR_MAX);
 
             // Adds new player to current roster of players.
@@ -478,7 +489,7 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
     {
         if (nCtr != nPlyrIdx)
         {
-            printf("    [%d] Player %d (%s)\n", nDispCtr, currPlayers[nCtr].nPNum, currPlayers[nCtr].playerName);
+            printf("    [%d] Player %d (%s)\n\n", nDispCtr, currPlayers[nCtr].nPNum, currPlayers[nCtr].playerName);
             BufferList[nBuffIdx] = currPlayers[nCtr];
 
             nBuffIdx++;
@@ -488,13 +499,13 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
 
     do
     {
-        printf("\n\n>> ");
+        printf("\n>> ");
         scanf("%d", &nChoice);
 
-        if (nChoice > theGame.nPlyrCtr || nChoice < 1)
-            printf("\nInvalid Input! \'1\' - \'%d\' only!\n", theGame.nPlyrCtr);
+        if (nChoice > theGame.nPlyrCtr-1 || nChoice < 1)
+            printf("\nInvalid Input! \'1\' - \'%d\' only!\n", theGame.nPlyrCtr-1);
 
-    } while (nChoice > theGame.nPlyrCtr || nChoice < 1);
+    } while (nChoice > theGame.nPlyrCtr-1 || nChoice < 1);
 
     nBuffIdx = nChoice - 1;
 
@@ -685,13 +696,16 @@ void runGame(int nWinScore, int nGameSeed)
     // Miscellaneous
     int nChoice; // Can only be '1' or '2'. Choice of the player to score or steal. 1 = Score, 2 = Steal.
     int nGenCtr; // General Counter
-    int nTag;
     PlayerData BufferList;
     int nPrintCtr;
+    int nCtr2;
+    int nCtr3;
 
     // Winner Variables
     int nWinTag;
     PlayerData Winners[PLAYER_MAX];
+    // PlayerData ScoreUpd[PLAYER_MAX];
+    // int nScUpIdx;
     int nWindex = 0;
     
     // Sorting Algorithim Variables
@@ -780,12 +794,80 @@ void runGame(int nWinScore, int nGameSeed)
                 nGameSignal = 1; // Signals the game's end.
                 nWinTag++;
 
+                // INTEGRATION OF NEW HIGH SCORE UPDATES
+
+                // FILE UPDATE PROCESS FOR NEW HIGH SCORE
+
+                // This loop will only update statistics one time, as during the update of the player high score, once the game score and the all-time high score becomes equal,
+                // this block will simply pass and reprint the player without changing the score, as it does not recognize the player's current high score as equal.
+                for (nCtr2 = 0; nCtr2 < theGame.nPlyrCtr; nCtr2++)
+                {
+                    // PREPARATION FOR FILE MANAGEMENT
+                    fPlayers = fopen("players.txt", "r");
+                    fTemp = fopen("temp.txt", "w");
+
+                    // Including Integration of Game Win Addition.
+
+                    for (nCtr3 = 0; feof(fPlayers) == 0; nCtr3++)
+                    {
+                        // Verify Player Position on File
+                        fscanf(fPlayers, "%s", BufferList.playerName);
+
+                        fseek(fPlayers, USERCHAR_MAX-sizeof(BufferList.playerName), SEEK_CUR);
+                        fscanf(fPlayers, "%d", &BufferList.nGameWins);
+
+                        fseek(fPlayers, 5, SEEK_CUR);
+                        fscanf(fPlayers, "%d", &BufferList.nScoreMax);
+
+                        if (strcmp(BufferList.playerName, currPlayers[nCtr2].playerName) == 0 && BufferList.nGameWins == currPlayers[nCtr2].nGameWins && BufferList.nScoreMax == currPlayers[nCtr2].nScoreMax) // Update winners' win stat.
+                        {
+            
+                            if (currPlayers[nCtr2].nScoreMax < currPlayers[nCtr2].theDeck.nCurrScore)
+                            {
+                                currPlayers[nCtr2].nScoreMax = currPlayers[nCtr2].theDeck.nCurrScore;
+                            }
+
+                            fprintf(fTemp, "\n%s", currPlayers[nCtr2].playerName);
+
+                            for (nPrintCtr = 0; nPrintCtr < (USERCHAR_MAX - (strlen(currPlayers[nCtr2].playerName) - 1)); nPrintCtr++)
+                                fprintf(fTemp, " ");
+
+                            fprintf(fTemp, "%d", currPlayers[nCtr2].nGameWins);
+
+                            for (nPrintCtr = 0; nPrintCtr < 5; nPrintCtr++)
+                                fprintf(fTemp, " ");
+
+                            fprintf(fTemp, "%d", currPlayers[nCtr2].nScoreMax);
+                        }
+                        else // Simply copy and paste the old data to new file.
+                        {
+                            fprintf(fTemp, "\n%s", BufferList.playerName);
+
+                            for (nPrintCtr = 0; nPrintCtr < (USERCHAR_MAX - (strlen(BufferList.playerName) - 1)); nPrintCtr++)
+                                fprintf(fTemp, " ");
+
+                            fprintf(fTemp, "%d", BufferList.nGameWins);
+
+                            for (nPrintCtr = 0; nPrintCtr < 5; nPrintCtr++)
+                                fprintf(fTemp, " ");
+
+                            fprintf(fTemp, "%d", BufferList.nScoreMax);
+                        }
+                    } 
+
+                    fclose(fPlayers);
+                    fclose(fTemp);
+
+                    remove("players.txt");
+                    rename("temp.txt", "players.txt");
+                }
+                // END OF FILE MANAGEMENT
+
                 Winners[nWindex] = currPlayers[nPlyrIdx]; // Assigns eligible players to the winners' array.
                 nWindex++;
                 
             }
         }
-
     }
 
     // Nullifying Empty Spaces within the Winners' Index
@@ -832,6 +914,7 @@ void runGame(int nWinScore, int nGameSeed)
         }
     } while (nChoice != 1);
 
+
     if (nWinTag > 1) // Second layer of winners' comparison, if there are more than 1 players that achieved the Winning Score.
     {
         nWinTag = 0;
@@ -870,18 +953,18 @@ void runGame(int nWinScore, int nGameSeed)
 
     printf("\nHere are the Victor/s: \n");
 
+    // FILE UPDATE PROCESS FOR ADD WINS
     for (nGenCtr = PLAYER_MAX-1; Winners[nGenCtr].nPNum != -999; nGenCtr--)
     {
         printf("Player %d (%s), wins!\n",  Winners[nGenCtr].nPNum, Winners[nGenCtr].playerName);
 
         // PREPARATION FOR FILE MANAGEMENT
         fPlayers = fopen("players.txt", "r");
-        fTemp = fopen("temp.txt", "r");
+        fTemp = fopen("temp.txt", "w");
 
         // Including Integration of Game Win Addition.
-        nTag = 1;
 
-        for (nI = 1; nTag == 1 ; nI++)
+        for (nI = 0; feof(fPlayers) == 0; nI++)
         {
             // Verify Player Position on File
             fscanf(fPlayers, "%s", BufferList.playerName);
@@ -892,15 +975,9 @@ void runGame(int nWinScore, int nGameSeed)
             fseek(fPlayers, 5, SEEK_CUR);
             fscanf(fPlayers, "%d", &BufferList.nScoreMax);
 
-            printf("\nTEST FOR LOOP %s\n", BufferList.playerName);
-
-            if (strcmp(BufferList.playerName, Winners[nGenCtr].playerName) == 0 && BufferList.nGameWins == Winners[nGenCtr].nGameWins && BufferList.nScoreMax == Winners[nGenCtr].nScoreMax)
+            if (strcmp(BufferList.playerName, Winners[nGenCtr].playerName) == 0 && BufferList.nGameWins == Winners[nGenCtr].nGameWins && BufferList.nScoreMax == Winners[nGenCtr].nScoreMax) // Update winners' win stat.
             {
-                printf("\nTHE PLAYER %d (%s), SCORES A WIN AT FILE POS %ld\n",  Winners[nGenCtr].nPNum, Winners[nGenCtr].playerName, ftell(fPlayers));
                 Winners[nGenCtr].nGameWins++;
-                nTag = 0;
-
-                fgets(fPlayers, sizeof(USERCHAR_MAX+BufferList.nGameWins+5+BufferList.nScoreMax), stdin);
 
                 fprintf(fTemp, "\n%s", Winners[nGenCtr].playerName);
 
@@ -914,15 +991,33 @@ void runGame(int nWinScore, int nGameSeed)
 
                 fprintf(fTemp, "%d", Winners[nGenCtr].nScoreMax);
             }
+            else // Simply copy and paste the old data to new file.
+            {
+
+                fprintf(fTemp, "\n%s", BufferList.playerName);
+
+                for (nPrintCtr = 0; nPrintCtr < (USERCHAR_MAX - (strlen(BufferList.playerName) - 1)); nPrintCtr++)
+                    fprintf(fTemp, " ");
+
+                fprintf(fTemp, "%d", BufferList.nGameWins);
+
+                for (nPrintCtr = 0; nPrintCtr < 5; nPrintCtr++)
+                    fprintf(fTemp, " ");
+
+                fprintf(fTemp, "%d", BufferList.nScoreMax);
+
+            }
         } 
 
         fclose(fPlayers);
         fclose(fTemp);
+
+        remove("players.txt");
+        rename("temp.txt", "players.txt");
     }
             
-
     // Return to Main Menu
-    printf("\nType \'1\' to return to the main menu and save player data.\n");
+    printf("\nType \'1\' to return to the main menu.\n");
     nChoice = 0;
 
     do
