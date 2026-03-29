@@ -14,13 +14,14 @@
 ******************************************************************************/
 
 /*
-    PATCH NOTES Beta 1.1.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES Beta 1.2.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
     
     In gamefunctions.c
-    - Established Player Initialization Restrictions/Modifications
-        - Max Players in players.txt set to 50 (MAX_PLAYER_LOAD).
-        - Set restrictions for same username within player list.
-        - Shows the whole player list of players.txt for selection.
+    - Fixed a bug where tiebreaker for tank comparison did not work.
+    - Fixed a bug where sometimes, victors' names would not show up.
+    
+    In defs.h
+    - Added nTankCtr under PlayerDeck structure.
 
 */
 
@@ -245,7 +246,7 @@ void mainMenu(int nWinScore, int nGameSeed)
     // int nWinScore = 20; // Default Winning Score
 
     printf("\nWelcome to MANTIS\n");
-    printf("Version Beta 1.0.0\n\n");
+    printf("Version Beta 1.2.0\n\n");
 
     printf("Main Menu\n");
     printf("    [1] New Game\n");
