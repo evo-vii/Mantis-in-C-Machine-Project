@@ -42,6 +42,7 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
     int nTempIdx = 0;
 
     int nExists = 0;
+    int nStop;
 
     // Initial asking for player count.
     do
@@ -93,13 +94,34 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
             printf("\n>> ");
             scanf("%d", &nChoice);
 
+            nStop = 0;
+
+            for (nStructIdx = 0; nStructIdx < nCtr2 && nStop != 1; nStructIdx++)
+            {    
+                if (nChoice == nStructIdx+1)
+                {
+                    nStop = 1;
+                }
+            }
+
+            nExists = 0;
+
+            for (nTempIdx = 0; nTempIdx < PLAYER_MAX; nTempIdx++)
+            {
+                if (strcmp(currPlayers[nTempIdx].playerName, BufferList[nStructIdx-1].playerName) == 0)
+                    nExists = 1;
+            }
+
+            if (nExists == 1)
+                printf("\nThis player already exists! Pick a different player.\n");
+
             if (nChoice > nCtr2-1 || nChoice < 0)
                 printf("\nInvalid Input! Pick from the choices only!\n");
 
             if (nChoice == 0 && nCtr2 >= MAX_PLAYER_LOAD-1)
                 printf("\nYou cannot add any more players! Max player capacity: %d\n", MAX_PLAYER_LOAD);
 
-        } while (nChoice > nCtr2-1 || nChoice < 0 || (nChoice == 0 && nCtr2 >= MAX_PLAYER_LOAD-1));
+        } while (nChoice > nCtr2-1 || nChoice < 0 || (nChoice == 0 && nCtr2 >= MAX_PLAYER_LOAD-1) || nExists == 1);
 
         if (nChoice == 0) // If player chooses to create a new player.
         {
@@ -109,6 +131,8 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
                 scanf("%s", currPlayers[nCurrIdx].playerName);
 
                 fseek(fPtr, 0, SEEK_SET);
+
+                nExists = 0;
 
                 for (nTempIdx = 0; feof(fPtr) == 0; nTempIdx++)
                 {
@@ -160,7 +184,8 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
             nCurrIdx++;
         }
         else
-        {
+        {  
+         
             for (nStructIdx = 0; nStructIdx < nCtr2; nStructIdx++)
             {    
                 if (nChoice == nStructIdx+1)
@@ -172,6 +197,8 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
                     nCurrIdx++;
                 }
             }
+
+              
         }
 
         fseek(fPtr, 0, SEEK_SET);
