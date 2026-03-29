@@ -94,26 +94,29 @@ int playerInit(PlayerData currPlayers[], FILE* fPtr)
             printf("\n>> ");
             scanf("%d", &nChoice);
 
-            nStop = 0;
-
-            for (nStructIdx = 0; nStructIdx < nCtr2 && nStop != 1; nStructIdx++)
-            {    
-                if (nChoice == nStructIdx+1)
-                {
-                    nStop = 1;
-                }
-            }
-
-            nExists = 0;
-
-            for (nTempIdx = 0; nTempIdx < PLAYER_MAX; nTempIdx++)
+            if (nChoice != 0)
             {
-                if (strcmp(currPlayers[nTempIdx].playerName, BufferList[nStructIdx-1].playerName) == 0)
-                    nExists = 1;
-            }
+                nStop = 0;
 
-            if (nExists == 1)
-                printf("\nThis player already exists! Pick a different player.\n");
+                for (nStructIdx = 0; nStructIdx < nCtr2 && nStop != 1; nStructIdx++)
+                {    
+                    if (nChoice == nStructIdx+1)
+                    {
+                        nStop = 1;
+                    }
+                }
+
+                nExists = 0;
+
+                for (nTempIdx = 0; nTempIdx < PLAYER_MAX; nTempIdx++)
+                {
+                    if (strcmp(currPlayers[nTempIdx].playerName, BufferList[nStructIdx-1].playerName) == 0)
+                        nExists = 1;
+                }
+
+                if (nExists == 1)
+                    printf("\nThis player already exists! Pick a different player.\n");
+            }
 
             if (nChoice > nCtr2-1 || nChoice < 0)
                 printf("\nInvalid Input! Pick from the choices only!\n");
