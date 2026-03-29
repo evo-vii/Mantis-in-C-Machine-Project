@@ -6,33 +6,22 @@
  *  Author/s        : Kabigting, Derrell Maiko V.
  *                    Sanico, Lance Matthew G.
  *  Section         : S12A
- *  Last Modified   : 03/27/2026
- *  Acknowledgments : 1. w3schools.com 
-                      2. Search and Sorting Algoritms (by Ms. Kalaw)
+ *  Last Modified   : 03/29/2026
+ *  Acknowledgments/: 1. w3schools.com 
+    References        2. Search and Sorting Algoritms (by Ms. Kalaw)
                       3. What's a seed in a random number generator? Retrieved from: https://yourbasic.org/algorithms/random-number-generator-seed/
+                      4. C Exercises: Replace a specific line in a file with a new text. Retrieved from: https://www.w3resource.com/c-programming-exercises/file-handling/c-file-handling-exercise-9.php
 ******************************************************************************/
 
 /*
-    PATCH NOTES Beta 0.1.1 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES Beta 1.0.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
     
     Primary
-    - Primary game flow has been established.
-    - Modified the description of the program.
-    
-    In mp.c
-    - Began building settings() and topPlayers().
-    - Established Settings to Change Winning Score.
-    - Established Settings to Change Randomizer Seed.
-    - Established Player Leaderboard.
+    - Program enters formal debugging phase.
 
     In gamefunctions.c
-    - Established runGame().
-    - Removed Debugging Tools.
-    - Updated function comments for proper format.
+    - Completed the game proper and basic requirements.
 
-    In defs.h
-    - Removed original GameState structure.
-    - Defined MAX_PLAYER_LOAD constant.
 */
 
 
@@ -256,7 +245,7 @@ void mainMenu(int nWinScore, int nGameSeed)
     // int nWinScore = 20; // Default Winning Score
 
     printf("\nWelcome to MANTIS\n");
-    printf("Version Beta 0.1.1\n\n");
+    printf("Version Beta 1.0.0\n\n");
 
     printf("Main Menu\n");
     printf("    [1] New Game\n");
@@ -319,6 +308,6 @@ int main()
  * that I/we have not copied in part or whole or otherwise plagiarized the work of other
  * students and/or persons, nor did I employ the use of AI in any part of the deliverable.
  *
- * Kabigting, Derrell Maiko V. (ID NO.)
+ * Kabigting, Derrell Maiko V. 12507016
  * Sanico, Lance Matthew G.    12506311
  */
