@@ -291,6 +291,8 @@ void displayDeck(PlayerData currPlayers[], GameState theGame) // CONTAINS ERRORS
     @param theGame - This is the main control structure of the game, containing relevant information such as the game's deck and player count.
     @param nGameSeed - The seed for the number randomizer used in shuffling the card deck.
 
+    @pre - nCount can never be invalid, as this is initialized with the constraints and restrictions from playerInit().
+
     @return nCardNum - The index of the game's deck to continue incrementing after removing the dealt cards at initialization.
 
 */
@@ -939,7 +941,7 @@ void runGame(int nWinScore, int nGameSeed)
             }
         }
     }
-
+    
     // Nullifying Empty Spaces within the Winners' Index
     for (nGenCtr = nWindex; nGenCtr < PLAYER_MAX; nGenCtr++)
     {
@@ -995,12 +997,14 @@ void runGame(int nWinScore, int nGameSeed)
             if (Winners[nGenCtr].theDeck.nCurrScore < Winners[nGenCtr + 1].theDeck.nCurrScore)
             {                     
                 Winners[nGenCtr] = NullPlayer;
-                nWinTag2++;
             }
             else if (Winners[nGenCtr].theDeck.nCurrScore == Winners[nGenCtr + 1].theDeck.nCurrScore)
             {
                 nWinTag2++;
             }
+
+            if (Winners[nGenCtr-1].theDeck.nCurrScore < Winners[nGenCtr].theDeck.nCurrScore)
+                nWinTag = 1;
         }
 
         // COMPARISON BY TANKS
