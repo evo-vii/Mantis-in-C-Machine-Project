@@ -341,7 +341,8 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState *theGam
     for (nPlyrIdx = 0; nPlyrIdx < theGame->nPlyrCtr; nPlyrIdx++)
     {
         currPlayers[nPlyrIdx].theDeck.nTankAmt = 0;
-        
+        currPlayers[nPlyrIdx].theDeck.nTankCtr = 0;
+
         for (nCtr = 0; nCtr < CARD_DEAL; nCtr++)
         {
             nCardBackIdx = 0;
@@ -360,6 +361,7 @@ int deckInit(int nCount, FILE* fPtr, PlayerData currPlayers[], GameState *theGam
             theGame->deck[nDeckIdx].nPointVal = 0;
 
             currPlayers[nPlyrIdx].theDeck.nTankAmt++;
+            currPlayers[nPlyrIdx].theDeck.nTankCtr++;
             nDeckIdx++;
         }
     }
@@ -437,6 +439,8 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = '\0';
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+2] = '\0';
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = 0;
+
+            currPlayers[nPlyrIdx].theDeck.nTankCtr--;
         }    
     }
     
@@ -474,6 +478,8 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
                 currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
 
                 nFlag++;
+
+                currPlayers[nPlyrIdx].theDeck.nTankCtr++;
             }
         }
 
@@ -481,7 +487,8 @@ void scoreFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
 
         if (nFlag == 0)
         {
-            currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
+            currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments index of tank cards in the pile.
+            currPlayers[nPlyrIdx].theDeck.nTankCtr++; // Increments amount of tank cards in the pile.
 
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
@@ -599,13 +606,16 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
                     currPlayers[nVicIdx].theDeck.tankPile[nCtr].nPointVal = 0;
 
                     nFlag++;
+
+                    currPlayers[nPlyrIdx].theDeck.nTankCtr++;
                 }
             }
 
             // Increments the tank amount of the stealing player otherwise.
             if (nFlag == 0)
             {
-                currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
+                currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments index of tank cards in the pile.
+                currPlayers[nPlyrIdx].theDeck.nTankCtr++; // Increments amount of tank cards in the pile.
 
                 currPlayers[nPlyrIdx].theDeck.tankPile[nCtr2].cFront = currPlayers[nVicIdx].theDeck.tankPile[nCtr].cFront;
                 currPlayers[nPlyrIdx].theDeck.tankPile[nCtr2].cBack[nCardBackIdx] = currPlayers[nVicIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx];
@@ -642,13 +652,16 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
                 currPlayers[nVicIdx].theDeck.tankPile[nCtr].nPointVal = theGame.deck[nDeckIdx].nPointVal;
 
                 nFlag++;
+
+                currPlayers[nVicIdx].theDeck.nTankCtr++;
             }
         }
 
         // Increments the tank amount of the stealing player otherwise.
         if (nFlag == 0)
         {
-            currPlayers[nVicIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
+            currPlayers[nVicIdx].theDeck.nTankAmt++; // Increments index of tank cards in the pile.
+            currPlayers[nVicIdx].theDeck.nTankCtr++; // Increments amount of tank cards in the pile.
 
             currPlayers[nVicIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
             currPlayers[nVicIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
@@ -680,14 +693,17 @@ void stealFlow(PlayerData currPlayers[], GameState theGame, int nPlyrIdx, int nD
 
                 nFlag++;
                 nTankCtr++;
+
+                currPlayers[nPlyrIdx].theDeck.nTankCtr++;
             }
         }
 
         // Increments the tank amount of the stealing player otherwise.
         if (nFlag == 0)
         {
-            currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments amount of tank cards in the pile.
-            
+            currPlayers[nPlyrIdx].theDeck.nTankAmt++; // Increments index of tank cards in the pile.
+            currPlayers[nPlyrIdx].theDeck.nTankCtr++; // Increments amount of tank cards in the pile.
+
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cFront = theGame.deck[nDeckIdx].cFront;
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx] = theGame.deck[nDeckIdx].cBack[nCardBackIdx];
             currPlayers[nPlyrIdx].theDeck.tankPile[nCtr].cBack[nCardBackIdx+1] = theGame.deck[nDeckIdx].cBack[nCardBackIdx+1];
@@ -758,9 +774,8 @@ void runGame(int nWinScore, int nGameSeed)
     // Winner Variables
     int nWinTag;
     PlayerData Winners[PLAYER_MAX];
-    // PlayerData ScoreUpd[PLAYER_MAX];
-    // int nScUpIdx;
     int nWindex = 0;
+    int nWinTag2;
     
     // Sorting Algorithim Variables
     int nI;
@@ -778,6 +793,7 @@ void runGame(int nWinScore, int nGameSeed)
     NullPlayer.nGameWins = -999;
     NullPlayer.theDeck.nCurrScore = -999;
     NullPlayer.theDeck.nTankAmt = -999;
+    NullPlayer.theDeck.nTankCtr = -999;
 
     // Initialization Processes
 
@@ -971,7 +987,7 @@ void runGame(int nWinScore, int nGameSeed)
 
     if (nWinTag > 1) // Second layer of winners' comparison, if there are more than 1 players that achieved the Winning Score.
     {
-        nWinTag = 0;
+        nWinTag2 = 0;
 
         // COMPARING BY SCORE FIRST
         for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
@@ -979,19 +995,42 @@ void runGame(int nWinScore, int nGameSeed)
             if (Winners[nGenCtr].theDeck.nCurrScore < Winners[nGenCtr + 1].theDeck.nCurrScore)
             {                     
                 Winners[nGenCtr] = NullPlayer;
-                nWinTag++;
+                nWinTag2++;
+            }
+            else if (Winners[nGenCtr].theDeck.nCurrScore == Winners[nGenCtr + 1].theDeck.nCurrScore)
+            {
+                nWinTag2++;
             }
         }
 
         // COMPARISON BY TANKS
-        if (nWinTag > 1)
+        if (nWinTag2 > 1)
         {
+
+            // SORTING BY TANK
+            for (nI = 0; nI < PLAYER_MAX; nI++)
+            {
+                nMin = nI;
+                for (nJ = nI+1; nJ < PLAYER_MAX; nJ++)
+                {
+                    if (Winners[nMin].theDeck.nTankCtr > Winners[nJ].theDeck.nTankCtr)
+                        nMin = nJ;
+                }
+
+                if (nI != nMin)
+                {
+                    Temp = Winners[nI];
+                    Winners[nI] = Winners[nMin];
+                    Winners[nMin] = Temp;
+                }
+            }
+
+            // COMPARES BY TANK AMOUNT
             for (nGenCtr = 0; nGenCtr < PLAYER_MAX; nGenCtr++)
             {
-                if (Winners[nGenCtr].theDeck.nTankAmt < Winners[nGenCtr + 1].theDeck.nTankAmt)
+                if (Winners[nGenCtr].theDeck.nTankCtr < Winners[nGenCtr + 1].theDeck.nTankCtr && nGenCtr != PLAYER_MAX-1)
                 {
                     Winners[nGenCtr] = NullPlayer;
-                    nWinTag++;
                 }
             }
         }
@@ -1011,6 +1050,7 @@ void runGame(int nWinScore, int nGameSeed)
     for (nGenCtr = PLAYER_MAX-1; Winners[nGenCtr].nPNum != -999; nGenCtr--)
     {
         printf("Player %d (%s), wins!\n",  Winners[nGenCtr].nPNum, Winners[nGenCtr].playerName);
+        printf("TANK AMOUNT: %d\n", Winners[nGenCtr].theDeck.nTankCtr);
 
         // PREPARATION FOR FILE MANAGEMENT
         fPlayers = fopen("players.txt", "r");
