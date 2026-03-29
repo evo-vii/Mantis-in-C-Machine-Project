@@ -1,5 +1,5 @@
 
-GUSTAVE                               9     19
+GUSTAVE                               11     23
 MAELLE                                9     22
 LUNE                                  13     21
 SCIEL                                 10     21
@@ -8,8 +8,9 @@ VERSO                                 9     23
 ESQUIE                                9     19
 RENOIR                                9     10
 ALINE                                 9     17
-ALICIA                                9     5
-CLEA                                  9     1
+ALICIA                                9     15
+CLEA                                  10     22
 DUALLISTE                             9     21
 SIRENE                                0     14
 JULIA                                 1     20
+AXON                                  0     14
