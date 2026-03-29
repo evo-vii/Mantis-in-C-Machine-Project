@@ -14,14 +14,10 @@
 ******************************************************************************/
 
 /*
-    PATCH NOTES Beta 1.2.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES Release 1.0.0
     
     In gamefunctions.c
-    - Fixed a bug where tiebreaker for tank comparison did not work.
-    - Fixed a bug where sometimes, victors' names would not show up.
-    
-    In defs.h
-    - Added nTankCtr under PlayerDeck structure.
+    - Fixed a bug where winning by scores did not present correct victor.
 
 */
 
@@ -246,7 +242,7 @@ void mainMenu(int nWinScore, int nGameSeed)
     // int nWinScore = 20; // Default Winning Score
 
     printf("\nWelcome to MANTIS\n");
-    printf("Version Beta 1.2.0\n\n");
+    printf("Version Release 1.0.0\n\n");
 
     printf("Main Menu\n");
     printf("    [1] New Game\n");
