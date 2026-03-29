@@ -14,13 +14,13 @@
 ******************************************************************************/
 
 /*
-    PATCH NOTES Beta 1.0.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
+    PATCH NOTES Beta 1.1.0 (To be UPDATED AND REPLACED at EVERY FILE MODIFICATION)
     
-    Primary
-    - Program enters formal debugging phase.
-
     In gamefunctions.c
-    - Completed the game proper and basic requirements.
+    - Established Player Initialization Restrictions/Modifications
+        - Max Players in players.txt set to 50 (MAX_PLAYER_LOAD).
+        - Set restrictions for same username within player list.
+        - Shows the whole player list of players.txt for selection.
 
 */
 
