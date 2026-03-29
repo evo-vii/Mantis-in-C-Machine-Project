@@ -1,6 +1,15 @@
 
-GUSTAVE                               0     0
-MAELLE                                0     0
-LUNE                                  0     0
-SCIEL                                 0     0
-VERSO                                 0     0
+GUSTAVE                               9     19
+MAELLE                                9     22
+LUNE                                  13     21
+SCIEL                                 10     21
+MONOCCO                               10     20
+VERSO                                 9     23
+ESQUIE                                9     19
+RENOIR                                9     10
+ALINE                                 9     17
+ALICIA                                9     5
+CLEA                                  9     1
+DUALLISTE                             9     21
+SIRENE                                0     14
+JULIA                                 1     20
