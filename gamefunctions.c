@@ -1050,7 +1050,6 @@ void runGame(int nWinScore, int nGameSeed)
     for (nGenCtr = PLAYER_MAX-1; Winners[nGenCtr].nPNum != -999; nGenCtr--)
     {
         printf("Player %d (%s), wins!\n",  Winners[nGenCtr].nPNum, Winners[nGenCtr].playerName);
-        printf("TANK AMOUNT: %d\n", Winners[nGenCtr].theDeck.nTankCtr);
 
         // PREPARATION FOR FILE MANAGEMENT
         fPlayers = fopen("players.txt", "r");
