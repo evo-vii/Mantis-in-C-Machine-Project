@@ -80,14 +80,14 @@ void settings(int *nWinScore, int *nGameSeed)
 
         do
         {
-            printf("\nSet Winning Score (Minimum: 10, Maximum: 100)\n");
+            printf("\nSet Winning Score (Minimum: 5, Maximum: 100)\n");
             printf(">> ");
             scanf("%d", &nSetting);
 
-            if (nSetting > 100 || nSetting < 10)
+            if (nSetting > 100 || nSetting < 5)
                 printf("\nInvalid input! Follow the minimum and maximum allowed values!\n");
 
-        } while (nSetting > 100 || nSetting < 10);
+        } while (nSetting > 100 || nSetting < 5);
 
         printf("\nYou set the Winning Score to: %d\n", nSetting);
 
