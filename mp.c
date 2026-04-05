@@ -233,6 +233,8 @@ void topPlayers()
             printf("\nInvalid input! Type \'1\' only!");
     } while (nChoice != 1);
 
+    fclose(fPlayers); // Closes File
+
 }
 
 void mainMenu(int nWinScore, int nGameSeed)
